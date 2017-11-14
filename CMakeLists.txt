@@ -22,6 +22,8 @@
 #
 # This CMakeLists.txt file assumes, that the Kaleidoscope-CMake
 # project is checked out in .../hardware/keyboardio/avr/libraries.
+# If so, it is able to autodetect all necessary paths of the 
+# Kaleidoscope firmware.
 # 
 # The following definintions must occur before the toolchain
 # file is included below, to make them visibile to Arduino-CMakes build
@@ -29,10 +31,19 @@
 #
 set(KALEIDOSCOPE_KEYBOARD_HARDWARE "Model01" CACHE STRING
    "The type of the keyboard hardware. Currently supported Model01, Raise, Shortcut")
+   
+if("${KALEIDOSCOPE_KEYBOARD_HARDWARE}" STREQUAL "Model01")
+   set(usb_product "Model 01")
+   set(usb_manufacturer "Keyboardio")
+# elseif("${KALEIDOSCOPE_KEYBOARD_HARDWARE}" STREQUAL "Raise")
+# elseif("${KALEIDOSCOPE_KEYBOARD_HARDWARE}" STREQUAL "Shortcut")
+else()
+   message(FATAL_ERROR "Unknown KALEIDOSCOPE_KEYBOARD_HARDWARE=\"${KALEIDOSCOPE_KEYBOARD_HARDWARE}\"")
+endif()
 
 # TODO: Allow this to work for all devices using Kaleidoscope
 #
-set(ARDUINO_CXX_FLAGS "-std=gnu++11 -DKALEIDOSCOPE_HARDWARE_H=\\\"Kaleidoscope-Hardware-${KALEIDOSCOPE_KEYBOARD_HARDWARE}.h\\\" -DUSB_MANUFACTURER=\\\"Keyboardio\\\" \"-DUSB_PRODUCT=\\\"Model 01\\\"\" -Wall -Wextra -fno-threadsafe-statics")
+set(ARDUINO_CXX_FLAGS "-std=gnu++11 -DKALEIDOSCOPE_HARDWARE_H=\\\"Kaleidoscope-Hardware-${KALEIDOSCOPE_KEYBOARD_HARDWARE}.h\\\" -DUSB_MANUFACTURER=\\\"${usb_manufacturer}\\\" \"-DUSB_PRODUCT=\\\"${usb_product}\\\"\" -Wall -Wextra -fno-threadsafe-statics")
 
 # The toolchain file is used when the project is initialized using\
 # the project directive further down.
@@ -95,13 +106,31 @@ endif()
 #
 # arduino_debug_on()
 
+# Try to find the hardware path
+#
+get_filename_component(cmake_source_dir_realpath "${CMAKE_SOURCE_DIR}" REALPATH)
+string(FIND "${cmake_source_dir_realpath}" "hardware/keyboardio/avr" find_pos REVERSE)
+if(find_pos GREATER -1)
+   string(SUBSTRING "${cmake_source_dir_realpath}" 0 ${find_pos} kaleidoscope_hardware_dir_guess)
+   set(kaleidoscope_hardware_dir_guess "${kaleidoscope_hardware_dir_guess}/hardware/keyboardio")
+   message("kaleidoscope_hardware_dir_guess=${kaleidoscope_hardware_dir_guess}")
+else()
+   get_filename_component(kaleidoscope_hardware_dir_guess "${CMAKE_SOURCE_DIR}/../../../../../hardware/keyboardio" REALPATH)
+endif()
+
+set(KALEIDOSCOPE_HARDWARE_DIR "${kaleidoscope_hardware_dir_guess}" CACHE PATH "The path to the Kaleidoscope hardware directory")
+
+if(NOT EXISTS "${KALEIDOSCOPE_HARDWARE_DIR}")
+   message(FATAL_ERROR "Unable to find KALEIDOSCOPE_HARDWARE_DIR=${KALEIDOSCOPE_HARDWARE_DIR}")
+endif()
+
 # Allow the standard directory containing Kaleidoscope libraries
 # to be found. Note: Arduino-CMake relies on this to be defined
 # to search for Arduino libraries.
 #
 link_directories("${CMAKE_SOURCE_DIR}/..")
 
-get_filename_component(kaleidoscope_lib_dir "${CMAKE_SOURCE_DIR}" DIRECTORY)
+set(kaleidoscope_lib_dir "${KALEIDOSCOPE_HARDWARE_DIR}/avr/libraries")
 
 # Add all Arduino library dirs as include (-I...) directories
 #
@@ -112,17 +141,13 @@ foreach(dir ${dirs})
    include_directories("${dir}/src/Kaleidoscope")
 endforeach()
 
-# Registers the keyboardio hardwares
-#
-get_filename_component(kaleidoscope_hardware_dir "${CMAKE_SOURCE_DIR}/../../../../keyboardio" REALPATH)
-
 # Defining KEYBOARDIO_CORES_PATH is necessary as
 # hardware/keyboardio/avr does not come with a cores
 # directory. It prevents that other unrelated directories named 
 # cores are found through paths in the users PATH variable.
 #
-set(KEYBOARDIO_CORES_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/avr/cores" CACHE PATH "")
-register_hardware_platform("${kaleidoscope_hardware_dir}")
+set(KEYBOARDIO_CORES_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/avr/cores" CACHE INTERNAL "")
+register_hardware_platform("${KALEIDOSCOPE_HARDWARE_DIR}")
 
 # Define some additional libraries whose sources must be defined explicitly
 # as they are not found by Arduino-CMake's library autodetection mechanism.
@@ -135,11 +160,8 @@ set(additional_libraries
 set(all_add_src)
 foreach(add_lib ${additional_libraries})
    file(GLOB_RECURSE add_src "${kaleidoscope_lib_dir}/${add_lib}/*.cpp")
-message("add_src: ${add_src}")
    list(APPEND all_add_src ${add_src})
 endforeach()
-
-message("all_add_src: ${all_add_src}")
 
 # Prevent some of Arduino's standard libraries to be found. This
 # is necessary as there is a Keyboard.h header in the Kaleidoscope
@@ -148,13 +170,32 @@ message("all_add_src: ${all_add_src}")
 # would be build and linked and thus lead to ambiguously defined 
 # symbols.
 #
-set(BLACKLISTED_ARDUINO_LIBS "${ARDUINO_SDK_PATH}/libraries/Keyboard")
+set(BLACKLISTED_ARDUINO_LIBS "${ARDUINO_SDK_PATH}/libraries/Keyboard/src")
+
+set(kaleidoscope_firmware_target "kaleidoscope.firmware")
 
 generate_arduino_firmware(
-   kaleidoscope.firmware # CMake target name
+   "${kaleidoscope_firmware_target}" # CMake target name
    BOARD model01
    SKETCH "${kaleidoscope_lib_dir}/Model01-Firmware/Model01-Firmware.ino"
    SRCS ${all_add_src}
    PORT "${device_port}"
    PROGRAMMER avrispmkii
+)
+
+# Add a decompile target
+#
+if(NOT AVROBJDUMP_PROGRAM)
+   find_program(AVROBJDUMP_PROGRAM
+            avr-objdump)
+endif()
+
+add_custom_target(
+   decompile
+   COMMAND ${AVROBJDUMP_PROGRAM} -d ${kaleidoscope_firmware_target}.elf
+)
+
+add_custom_target(
+   nm
+   COMMAND nm -C ${kaleidoscope_firmware_target}.elf
 )
