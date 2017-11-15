@@ -37,7 +37,7 @@ all dependencies between the firmware, libraries
 and their source files in a way that is fully transparent and compatible with
 the great variety of build systems that are supported by CMake. 
 
-CMake in its current version (3.5.1 on Ubuntu 16.04) supports the following build systems:
+CMake in its current version (3.5.1 on Ubuntu 16.04) supports the following build systems (taken from `man cmake-generators`).
 
 * Unix Makefiles               = Generates standard UNIX makefiles.
 * Ninja                        = Generates build.ninja files.
@@ -80,6 +80,10 @@ On Ubuntu Linux, e.g. install it as
 sudo apt-get install cmake cmake-curses-gui
 ```
 
+# For the impacient: A brief example
+
+TODO: Show how to build the stock firmware
+
 # Usage
 To build with CMake and GNU make on a Linux platform, do the following.
 
@@ -96,7 +100,7 @@ mkdir build
 cd build
 ```
 
-3. Setup the CMake build system
+3. Setup the CMake build system (this will use CMake's default generator for your platform)
 ```
 cmake ..
 ```
@@ -107,6 +111,16 @@ make
 ```
 
 Instructions for other systems (Windows, OSX) can slightly vary. Please consult your platform specific documentation of CMake.
+
+# Upload
+To upload the firmware, enter the following (assuming you selected the `Unix Makefiles` generator).
+```
+make upload
+```
+In general (for any arbitrary generator), enter the somewhat more detailed command
+```
+cmake --build . --target upload
+```
 
 # Parallel builds
 For most of its generators (for an explanation about what a generator is, see below) CMake supports parallel builds, 
@@ -219,12 +233,15 @@ it may be necessary to configure the system.
 The following table provides an overview of configuration variables that are
 available to tweak the CMake build system.
 
-| CMake Variable                 | Purpose                                                           |
-| ------------------------------ |:-----------------------------------------------------------------:|
-| KALEIDOSCOPE_HARDWARE_DIR      | An absolute path to the `.../hardware/keyboardio` directory.      |     
-|                                | This is only necessary, if Kaleidoscope-CMake is not              |
-|                                | cloned to the `.../hardware/keyboardio/avr/libraries` directory   |
-| KALEIDOSCOPE_KEYBOARD_HARDWARE | The keyboard hardware (currently one of Model01, Raise, Shortcut) |
+| CMake Variable                  | Purpose                                                           |
+| ------------------------------- |:-----------------------------------------------------------------:|
+| KALEIDOSCOPE_HARDWARE_DIR       | An absolute path to the `.../hardware/keyboardio` directory.      |     
+|                                 | This is only necessary, if Kaleidoscope-CMake is not              |
+|                                 | cloned to the `.../hardware/keyboardio/avr/libraries` directory   |
+| KALEIDOSCOPE_KEYBOARD_HARDWARE  | The keyboard hardware (currently one of Model01, Raise, Shortcut) |
+| KALEIDOSCOPE_FIRMWARE_SKETCH    | Filepath of the Arduino sketch (the *.ino) file                   |
+| KALEIDOSCOPE_ARDUINO_PROGRAMMER | The programmer to be used (see the [Arduino-CMake documentation](https://github.com/arduino-cmake/arduino-cmake) |
+|                                 | for more information on available programmers)                    |
 
 The value of a variable can either be set at the CMake command line during the configuration
 stage, e.g. as
