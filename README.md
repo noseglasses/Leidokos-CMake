@@ -72,7 +72,13 @@ ccmake ..
 file (`CMakeLists.txt`) resides. In the example above, we assumed the command to be entered
 from a directory that is one level below the Kaleidoscope-CMake root directory, therefore the `..` 
 at the end of the command.
-         
+
+# Todos
+This is still a work in progress. The following work-packages remain to be done, before this project can be released.
+* Add a complete example that demonstrates how to build the Kaleidoscope stock firmware
+* Add travis testing of the build system, and explain in this README what is actually tested
+* Add automatic tests that assert binary compatibility of two firmwares that are build with Kaleidoscope-CMake and the stock's Makefile build system
+
 # Prerequisites
 ## CMake
 To build with Kaleidoscope-CMake, the CMake build system must be installed. 
