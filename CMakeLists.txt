@@ -181,6 +181,35 @@ if(NOT programmer_ok)
    message(FATAL_ERROR "Please set KALEIDOSCOPE_ARDUINO_PROGRAMMER to one of the following: ${programmers}")
 endif()
 
+# Travis testing settings
+#
+set(travis_arduino "arduino-1.8.2")
+set(travis_arduino_file "${travis_arduino}-linux64.tar.xz")
+set(travis_arduino_path "${CMAKE_BINARY_DIR}/${travis_arduino}")
+set(travis_arduino_download_url "http://downloads.arduino.cc/${travis_arduino_file}")
+
+# Some targets require additional CMake scripts that enable using
+# portable CMake code during the build stage.
+#
+set(cmake_scripts_dir "${CMAKE_BINARY_DIR}/cmake_scripts")
+if(NOT EXISTS "${cmake_scripts_dir}")
+   file(MAKE_DIRECTORY "${cmake_scripts_dir}")
+endif()
+
+set(KALEIDOSCOPE_DOWNLOAD_ARDUINO FALSE CACHE BOOL "If this flag is \
+enabled, the build system downloads Arduino")
+
+if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
+
+   if(NOT EXISTS "${travis_arduino_path}")
+      message("Installing Arduino...")
+      file(DOWNLOAD "${travis_arduino_download_url}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}" SHOW_PROGRESS)
+      execute_process(
+         COMMAND "${CMAKE_COMMAND}" -E tar xvf "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
+      )
+   endif()
+endif()
+
 # Make sure that the correct avr-gcc of the arduino installation
 # is found. To achieve this we add the path to the Arduino SDK to
 # CMAKE_PREFIX_PATH, which is the path list that CMake uses to search for
@@ -190,7 +219,9 @@ endif()
 #       to use the actually determined ARDUINO_SDK_PATH to 
 #       define CMAKE_PREFIX_PATH.
 #
-if(NOT "$ENV{ARDUINO_PATH}" STREQUAL "")
+if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
+   set(CMAKE_PREFIX_PATH "${travis_arduino_path}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
+elseif(NOT "$ENV{ARDUINO_PATH}" STREQUAL "")
    set(CMAKE_PREFIX_PATH "$ENV{ARDUINO_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
 elseif(NOT "$ENV{ARDUINO_SDK_PATH}" STREQUAL "")
    set(CMAKE_PREFIX_PATH "$ENV{ARDUINO_SDK_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
@@ -286,6 +317,10 @@ generate_arduino_firmware(
    PROGRAMMER "${KALEIDOSCOPE_ARDUINO_PROGRAMMER}"
 )
 
+################################################################################
+# Additional targets for maintainance
+################################################################################
+
 # Add a decompile (actual a disassembly) target
 #
 if(NOT AVROBJDUMP_PROGRAM)
@@ -298,13 +333,135 @@ add_custom_target(
    COMMAND "${AVROBJDUMP_PROGRAM}" -d "${kaleidoscope_firmware_target}.elf"
 )
 
+add_custom_target(
+   disassembly
+   COMMAND "${AVROBJDUMP_PROGRAM}" -d "${kaleidoscope_firmware_target}.elf"
+)
+
 # Add a target that simplifies listing symbols.
 #
 if(NOT AVRNM_PROGRAM)
    find_program(AVRNM_PROGRAM
-            nm)
+            avr-nm)
 endif()
 add_custom_target(
    nm
    COMMAND "${AVRNM_PROGRAM}" -C "${kaleidoscope_firmware_target}.elf"
 )
+
+################################################################################
+# Targets taken over from Kaleidoscopes main build system
+################################################################################
+
+set(plugin_test_support_dir "${KALEIDOSCOPE_HARDWARE_DIR}/avr/build-tools")
+set(plugin_test_bin_dir "${plugin_test_support_dir}/x86_64/bin")
+
+# Add a custom target for the astyle teste
+#
+add_custom_target(
+   astyle
+   COMMAND "${plugin_test_support_dir}/run-astyle"
+)
+
+# set(travis_install_arduino_script "${cmake_scripts_dir}/travis_install_arduino.script.cmake")
+# 
+# file(WRITE "${travis_install_arduino_script}"
+# "\
+# if(NOT EXISTS \"${travis_arduino_path}\")
+#    message(\"Installing Arduino...\")
+#    file(DOWNLOAD \"${travis_arduino_download_url}\" \"${CMAKE_BINARY_DIR}/${travis_arduino_file}\" SHOW_PROGRESS)
+#    execute_process(
+#       COMMAND \"${CMAKE_COMMAND}\" -E tar xvf \"${CMAKE_BINARY_DIR}/${travis_arduino_file}\"
+#    )
+# endif()
+# "
+# )
+# 
+# add_custom_command(
+#    OUTPUT "${travis_arduino_path}"
+#    COMMAND "${CMAKE_COMMAND}" -P "${travis_install_arduino_script}"
+#    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+# )
+#    
+# add_custom_target(travis-install-arduino DEPENDS "${travis_arduino_path}")
+
+add_custom_target(
+   travis-smoke-examples
+#    COMMAND "${CMAKE_COMMAND}" --build . --target travis-install-arduino
+   COMMAND "${CMAKE_COMMAND}" --build . --target "${kaleidoscope_firmware_target}"
+   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+   COMMENT "Running smoke examples..."
+)
+
+# Add a custom target for the astyle tests
+#
+set(astyle_script "${cmake_scripts_dir}/astyle.script.cmake")
+
+
+find_program(
+   GIT_PROGRAM 
+   git
+)
+
+file(WRITE "${astyle_script}"
+"\
+set(ENV{PATH} \"${plugin_test_bin_dir}:$ENV{PATH}\")
+execute_process(
+   COMMAND \"${plugin_test_support_dir}/run-astyle\"
+)
+execute_process(
+   COMMAND \"${GIT_PROGRAM}\" diff --exit-code
+   RESULT_VARIABLE result
+)
+if(NOT \"${result}\" EQUAL 0)
+   message(FATAL_ERROR \"Astyle check found code style differences. Please run \\\"cmake --build . --target astyle\\\" and commit your changes\")
+endif()
+"
+)
+
+add_custom_target(
+   travis-check-astyle
+   COMMAND "${CMAKE_COMMAND}" -P "${astyle_script}"
+   COMMENT "Running astyle to check code style compliance"
+)
+	
+add_custom_target(travis-test)
+add_dependencies(travis-test travis-smoke-examples travis-check-astyle)
+
+add_custom_target(
+   cpplint-noisy
+   COMMAND "${plugin_test_support_dir}/cpplint.py"
+      --filter=-legal/copyright,-build/include,-readability/namespace,,-whitespace/line_length 
+      --recursive 
+      --extensions=cpp,h,ino 
+      "--exclude=${KALEIDOSCOPE_HARDWARE_DIR}/avr" 
+      --exclude=${travis_arduino}
+      src examples
+)
+	
+add_custom_target(
+   cpplint
+	COMMAND "${plugin_test_support_dir}/cpplint.py"
+      --quiet 
+      --filter=-whitespace,-legal/copyright,-build/include,-readability/namespace  
+      --recursive 
+      --extensions=cpp,h,ino 
+      src examples
+)
+
+add_custom_target(
+   check-docs
+   COMMAND doxygen "${plugin_test_support_dir}/check-docs.conf"
+	COMMAND python "${plugin_test_support_dir}/doxy-coverage.py" /tmp/undocced/xml
+)
+
+add_custom_target(
+   check-astyle
+	COMMAND "${plugin_test_support_dir}/run-astyle"
+	COMMAND "${GIT_PROGRAM}" diff --exit-code
+)
+
+# Note: The target name test is reserved in CMake for being used with CTest
+#
+add_custom_target(firmware_test)
+add_dependencies(firmware_test "${kaleidoscope_firmware_target}" check-astyle cpplint-noisy check-docs)

@@ -62,7 +62,7 @@ the list of generators displayed at the end of the text that is output when you 
 cmake --help
 ```
 
-To support the user, CMake supports several graphical frontends, whose availability differs between platforms. 
+To support the user, CMake supports several graphical front-ends, whose availability differs between platforms. 
 On Linux, e.g. a curses based GUI is available, that is started with the command
 ```
 ccmake ..
@@ -74,15 +74,23 @@ from a directory that is one level below the Kaleidoscope-CMake root directory, 
 at the end of the command.
          
 # Prerequisites
+## CMake
 To build with Kaleidoscope-CMake, the CMake build system must be installed. 
 On Ubuntu Linux, e.g. install it as
 ```
 sudo apt-get install cmake cmake-curses-gui
 ```
 
-# For the impacient: A brief example
+## Arduino-CMake
+Kaleidoscope-CMake currently depends on a [patched version](https://github.com/noseglasses/arduino-cmake) of 
+[Arduino-CMake](https://github.com/arduino-cmake/arduino-cmake) that is provided as a git submodule in the
+`3rd_party/arduino-cmake` directory of this project.
 
-TODO: Show how to build the stock firmware
+# For the impatient: A brief example
+
+TODO: Exemplify how to build the stock firmware (see the content of `stock_firmware_test.sh`).
+This build system currently requires a modified version of Kaleidoscope to work, for
+a bug report see [here](https://github.com/keyboardio/Arduino-Boards/issues/9).
 
 # Usage
 To build with CMake and GNU make on a Linux platform, do the following.
@@ -124,7 +132,7 @@ cmake --build . --target upload
 
 # Parallel builds
 For most of its generators (for an explanation about what a generator is, see below) CMake supports parallel builds, 
-that allow to use all cores of a multicore machine to shorten build times.
+that allow to use all cores of a multi-core machine to shorten build times.
 
 To build in parallel using 8 threads, using GNU make, run 
 
@@ -185,7 +193,7 @@ ninja help
 depending of the CMake Generator that has been selected.
 
 # Useful targets for developers
-## Compile, Pre-processing and assembly generation for individual sources
+## Compile, pre-processing and assembly generation for individual sources
 The list of sources that are part of a Kaleidoscope build is also displayed, when
 the `help` target is executed. For each source that is compiled there are three targets listed, ending in a
 file with extension `.obj`, `.i` and `.s`. 
@@ -205,26 +213,19 @@ The output of the pre-processing process the follows informs about the
 actual target path of the generated file.
 
 ## Disassembly
-For those familiary with assembly code, the `decompile` target allows
+For those familiary with assembly code, the `decompile` or `disassembly` target allows
 to generate a disassembly of the firmware code.
 
 ## Symbol list
 A symbol list can be output by using the `nm` target.
 
 ## Verbose builds
-The makefile generator supports the generation of verbose makefiles. Those
+The `Unix Makefiles` generator supports the generation of verbose makefiles. Those
 allow for extra verbose debugging output that can easily be toggled 
 via the environment variable `VERBOSE`, e.g.
 ```
 VERBOSE=1 make
 ```
-
-# Supported platforms
-Kaleidoscope-CMake is tested on Ubuntu Linux (16.04) with Arduino 1.8.5. As CMake and 
-arduino-cmake are both platform independent, this build system is supposed to
-work on other platforms, too.
-
-Testers working with other platforms are highly welcome! 
 
 # Advanced configuration
 Although, Kaleidoscope-CMake is meant to be as auto-detecting and smart as possible,
@@ -242,6 +243,8 @@ available to tweak the CMake build system.
 | KALEIDOSCOPE_FIRMWARE_SKETCH    | Filepath of the Arduino sketch (the *.ino) file                   |
 | KALEIDOSCOPE_ARDUINO_PROGRAMMER | The programmer to be used (see the [Arduino-CMake documentation](https://github.com/arduino-cmake/arduino-cmake) |
 |                                 | for more information on available programmers)                    |
+| KALEIDOSCOPE_DOWNLOAD_ARDUINO   | If this flag is enabled, the build system automatically downloads |
+|                                 | Arduino during the configuration phase.                           |
 
 The value of a variable can either be set at the CMake command line during the configuration
 stage, e.g. as
@@ -253,3 +256,13 @@ is started as
 ```
 ccmake ..
 ```
+
+# Supported platforms
+Kaleidoscope-CMake is tested on Ubuntu Linux (16.04) with Arduino 1.8.5. As CMake and 
+arduino-cmake are both platform independent, this build system is supposed to
+work on other platforms, too.
+
+Testers working with other platforms are highly welcome! 
+
+# Travis-testing
+TODO: Add a description of travis testing of the build system
