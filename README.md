@@ -2,8 +2,25 @@
 Enables portable and parallel builds of Kaleidoscope using the CMake build system.
 
 # Disclaimer
-This project is not meant as an replacement for Kaleidoscope's stock build systems,
+This project is not meant as a replacement for or a competition to Kaleidoscope's stock build systems,
 but rather as an additional tool, directed to experienced programmers.
+
+The maintainers of Kaleidoscope pointed out that they are currently not planning to support 
+other build systems apart from the Arduino IDE and their own GNU make based
+build system. Please respect their decision and do not bother them with
+questions about Kaleidoscope-CMake. 
+
+Instead, direct any issue reports and questions [here](https://github.com/noseglasses/Kaleidoscope-CMake).
+
+Pull requests are, of course, highly welcome, as well as testers that work with other (exotic) plaforms apart from Linux.
+
+# Acknowledgements
+Great thanks to the developers of Arduino-CMake, namely the original developer [queezythegreat](https://github.com/queezythegreat)
+and the current maintainer [JonasProgrammer](https://github.com/JonasProgrammer). 
+Your very well designed tool provides a transparent replacement to arduino-builder.
+
+Also, many thanks to the developers and maintainers of Kaleidoscope for the firmware and 
+the inspiration that lead to the creation of this project.
 
 # Introduction
 Kaleidoscope's stock build system is designed to be user friendly and welcoming. 
