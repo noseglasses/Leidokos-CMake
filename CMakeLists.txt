@@ -65,8 +65,11 @@ set(ARDUINO_CXX_FLAGS
 \"-DUSB_PRODUCT=\\\"${usb_product}\\\"\" \
 -Wall \
 -Wextra \
--fno-threadsafe-statics"
-)
+-fno-threadsafe-statics \
+-fno-exceptions \
+-ffunction-sections \
+-fdata-sections\
+")
 
 # Determine the device port for flashing
 # (taken over from keyboardio/avr/libraries/Kaleidoscope/etc/kaleidoscope-builder.conf)
@@ -239,10 +242,6 @@ set(ARDUINO_CMAKE_RECURSION_DEFAULT TRUE CACHE INTERNAL "")
 #
 set(CMAKE_TOOLCHAIN_FILE 
    "${CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/ArduinoToolchain.cmake")
-   
-# Uncomment this for detailed debugging of Arduino-CMake output.
-#
-# arduino_debug_on()
 
 ################################################################################
 # Project generation
@@ -253,6 +252,10 @@ set(CMAKE_TOOLCHAIN_FILE
 #
 project(Kaleidoscope)
 cmake_minimum_required(VERSION 2.8)
+
+# Uncomment this for detailed debugging of Arduino-CMake output.
+#
+arduino_debug_on()
 
 # Allow the standard directory containing Kaleidoscope libraries
 # to be found. Note: Arduino-CMake relies on this to be defined
@@ -308,7 +311,10 @@ endforeach()
 # would be build and linked and thus lead to ambiguously defined 
 # symbols.
 #
-set(ARDUINO_CMAKE_BLACKLISTED_ARDUINO_LIBS "${ARDUINO_SDK_PATH}/libraries/Keyboard/src"
+set(ARDUINO_CMAKE_BLACKLISTED_ARDUINO_LIBS 
+   "\
+${ARDUINO_SDK_PATH}/libraries/Keyboard/src;\
+${ARDUINO_SDK_PATH}/libraries/Mouse/src"
    CACHE INTERNAL "")
 
 generate_arduino_firmware(
