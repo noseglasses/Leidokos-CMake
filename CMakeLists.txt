@@ -232,6 +232,8 @@ endif()
 #
 set(kaleidoscope_firmware_target "kaleidoscope.firmware")
 
+set(ARDUINO_CMAKE_RECURSION_DEFAULT TRUE CACHE INTERNAL "")
+
 # The toolchain file is used when the project is initialized using
 # the project(...) directive further down.
 #
@@ -306,7 +308,8 @@ endforeach()
 # would be build and linked and thus lead to ambiguously defined 
 # symbols.
 #
-set(BLACKLISTED_ARDUINO_LIBS "${ARDUINO_SDK_PATH}/libraries/Keyboard/src")
+set(ARDUINO_CMAKE_BLACKLISTED_ARDUINO_LIBS "${ARDUINO_SDK_PATH}/libraries/Keyboard/src"
+   CACHE INTERNAL "")
 
 generate_arduino_firmware(
    "${kaleidoscope_firmware_target}" # CMake target name

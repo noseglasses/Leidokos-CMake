@@ -85,6 +85,8 @@ sudo apt-get install cmake cmake-curses-gui
 Kaleidoscope-CMake currently depends on a [patched version](https://github.com/noseglasses/arduino-cmake) of 
 [Arduino-CMake](https://github.com/arduino-cmake/arduino-cmake) that is provided as a git submodule in the
 `3rd_party/arduino-cmake` directory of this project.
+As soon as a [pull request](https://github.com/arduino-cmake/arduino-cmake/pull/17) with the 
+changes has been merged. we will go back to using the original [Arduino-CMake](https://github.com/arduino-cmake/arduino-cmake).
 
 # For the impatient: A brief example
 
