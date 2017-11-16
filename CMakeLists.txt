@@ -21,7 +21,7 @@
 # firmware.
 #
 # This CMakeLists.txt file assumes, that the Kaleidoscope-CMake
-# project is checked out in .../hardware/keyboardio/avr/libraries.
+# project is checked out in .../hardware/<vendor_id>/<architecture_id>/libraries.
 # If so, it is able to autodetect all necessary paths of the 
 # Kaleidoscope firmware.
 #
@@ -32,26 +32,138 @@
 # The following definintions must occur before the toolchain
 # file is included below, to make them visibile to Arduino-CMakes build
 # system.
+
+# Tries to find the hardware base path,
+#    i.e. the path that ends as ".../hardware"
 #
+function(find_hardware_base_path__
+   test_dir_
+   base_dir_var_
+   vendor_id_var_
+   architecture_id_var_
+)
+   # First we try, if the "Kaleidoscope-CMake" directory is below the directory
+   # we search for. As we do a string search in the path, we have to make sure 
+   # that any symbolic links and ".." are removed first.
+   #
+   get_filename_component(cmake_source_dir_realpath "${CMAKE_SOURCE_DIR}" REALPATH)
+   string(FIND "${cmake_source_dir_realpath}" 
+      "/hardware/" find_pos REVERSE)
+      
+   # If the string is not found, string(FIND...) returns -1 in find_pos
+   #
+   if(find_pos GREATER -1)
+
+      # The "Kaleidoscope-CMake" directory is obviously a subdirectory
+      # of the directory we are looking for.
+      
+      math(EXPR find_pos "${find_pos} + 9")
+
+      # Get the start of the path up to the place where the search string was 
+      # found
+      #
+      string(SUBSTRING "${cmake_source_dir_realpath}" 0 ${find_pos} 
+         base_dir)
+         
+      string(SUBSTRING "${cmake_source_dir_realpath}" ${find_pos} -1
+         path_remainder)
+      
+      if("${path_remainder}" MATCHES "/([^/]*)/.*")
+         set(vendor_id "${CMAKE_MATCH_1}")
+      endif()
+      
+      if("${path_remainder}" MATCHES "/[^/]*/([a-zA-Z0-9_]*)/.*")
+         set(architecture_id "${CMAKE_MATCH_1}")
+      endif()
+      
+      set(${base_dir_var_} "${base_dir}" PARENT_SCOPE)
+      set(${vendor_id_var_} "${vendor_id}" PARENT_SCOPE)
+      set(${architecture_id_var_} "${architecture_id}" PARENT_SCOPE)
+   
+      return()
+   endif()
+   
+   set(${base_dir_var_} "" PARENT_SCOPE)
+   set(${vendor_id_var_} "" PARENT_SCOPE)
+   set(${architecture_id_var_} "" PARENT_SCOPE)
+endfunction()
+
+macro(find_hardware_base_path
+   path_list_
+)
+   foreach(path ${path_list_})
+      find_hardware_base_path__(
+         "${path}"
+         hardware_base_path
+         vendor_id
+         architecture_id
+      )
+      if(hardware_base_path)
+         break()
+      endif()
+   endforeach()
+endmacro()
+
+find_hardware_base_path("${CMAKE_BINARY_DIR};${CMAKE_SOURCE_DIR}")
+
+if(NOT hardware_base_path)
+
+   # We have no clue where to look for the hardware directory.
+   #
+   set(hardware_base_path "<undefined>")
+   set(vendor_id "<undefined>")
+   set(architecture_id  "<undefined>")
+endif()
+
+message("hardware_base_path: ${hardware_base_path}")
+message("vendor_id: ${vendor_id}")
+message("architecture_id: ${architecture_id}")
+
+# Make the hardware directory user configurable by defining a cache variable.
+#
+set(KALEIDOSCOPE_HARDWARE_BASE_PATH "${hardware_base_path}" 
+   CACHE PATH "The path to the Kaleidoscope hardware base directory")
+   
+set(KALEIDOSCOPE_VENDOR_ID "${vendor_id}" 
+   CACHE STRING "The vendor id of the board to build a firmware for")
+
+set(KALEIDOSCOPE_ARCHITECTURE_ID "${architecture_id}"
+   CACHE STRING "The architecture id of the board to build a firmware for")
+
+if(NOT EXISTS "${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
+   message(FATAL_ERROR "Unable to find \
+KALEIDOSCOPE_HARDWARE_BASE_PATH=${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
+endif()
+
+set(kaleidoscope_platform_dir "${KALEIDOSCOPE_HARDWARE_BASE_PATH}/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}")
+
+if(NOT EXISTS "${kaleidoscope_platform_dir}")
+   message(SEND_ERROR "Unable to find platform directory \"${kaleidoscope_platform_dir}\"")
+   message(SEND_ERROR "The following CMake variables are related:")
+   message(SEND_ERROR "   KALEIDOSCOPE_HARDWARE_BASE_PATH = ${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
+   message(SEND_ERROR "   KALEIDOSCOPE_VENDOR_ID = ${KALEIDOSCOPE_VENDOR_ID}")
+   message(SEND_ERROR "   KALEIDOSCOPE_ARCHITECTURE_ID = ${KALEIDOSCOPE_ARCHITECTURE_ID}")
+   message(FATAL_ERROR "Aborting.")
+endif()
+
+set(kaleidoscope_lib_dir "${kaleidoscope_platform_dir}/libraries")
+
 # Let the user choose a name of the keyboard a firmware is supposed to be 
 # build for
 #
-set(KALEIDOSCOPE_KEYBOARD_HARDWARE "Model01" CACHE STRING
+set(KALEIDOSCOPE_KEYBOARD_HARDWARE "model01" CACHE STRING
    "The type of the keyboard hardware. \
-   Currently supported Model01, Raise, Shortcut")
+   Currently supported model01, raise, shortcut")
    
 # Based on the keyboard name, we set some alternative name string variables
 # that are used in the configurations below
 #
-if("${KALEIDOSCOPE_KEYBOARD_HARDWARE}" STREQUAL "Model01")
-   set(usb_product "Model 01")
-   set(usb_manufacturer "Keyboardio")
-   set(board "model01")
-# **Note:** Define above variables for other keyboards accordingly 
-# elseif("${KALEIDOSCOPE_KEYBOARD_HARDWARE}" STREQUAL "Raise")
-# elseif("${KALEIDOSCOPE_KEYBOARD_HARDWARE}" STREQUAL "Shortcut")
+set(hardware_definition_file "${CMAKE_SOURCE_DIR}/hardware/${vendor_id}/${architecture_id}/${KALEIDOSCOPE_KEYBOARD_HARDWARE}.cmake")
+if(NOT EXISTS "${hardware_definition_file}")
+   message(FATAL_ERROR "Unnable to find hardware definition file \"${hardware_definition_file}\" for \
+KALEIDOSCOPE_KEYBOARD_HARDWARE=${KALEIDOSCOPE_KEYBOARD_HARDWARE}")
 else()
-   message(FATAL_ERROR "Unknown KALEIDOSCOPE_KEYBOARD_HARDWARE=\"${KALEIDOSCOPE_KEYBOARD_HARDWARE}\"")
+   include("${hardware_definition_file}")
 endif()
 
 # Add some additional compiler command line flags that are needed
@@ -60,7 +172,7 @@ endif()
 set(ARDUINO_CXX_FLAGS 
    "\
 -std=gnu++11 \
--DKALEIDOSCOPE_HARDWARE_H=\\\"Kaleidoscope-Hardware-${KALEIDOSCOPE_KEYBOARD_HARDWARE}.h\\\" \
+-DKALEIDOSCOPE_HARDWARE_H=\\\"Kaleidoscope-Hardware-${product_id}.h\\\" \
 -DUSB_MANUFACTURER=\\\"${usb_manufacturer}\\\" \
 \"-DUSB_PRODUCT=\\\"${usb_product}\\\"\" \
 -Wall \
@@ -105,58 +217,11 @@ Is the keyboard actually connected?")
    set(device_port 10000)
 endif()
 
-# Try to find the hardware path,
-#    i.e. the path that ends as ".../hardware/keyboardio"
-#
-# First we try, if the "Kaleidoscope-CMake" directory is below the directory
-# we search for. As we do a string search in the path, we have to make sure 
-# that any symbolic links and ".." are removed first.
-#
-get_filename_component(cmake_source_dir_realpath "${CMAKE_SOURCE_DIR}" REALPATH)
-string(FIND "${cmake_source_dir_realpath}" 
-   "hardware/keyboardio/avr" find_pos REVERSE)
-   
-# If the string is not found, string(FIND...) returns -1 in find_pos
-#
-if(find_pos GREATER -1)
-
-   # The "Kaleidoscope-CMake" directory is obviously a subdirectory
-   # of the directory we are looking for.
-
-   # Get the start of the path up to the place where the search string was 
-   # found
-   #
-   string(SUBSTRING "${cmake_source_dir_realpath}" 0 ${find_pos} 
-      kaleidoscope_hardware_dir_guess)
-   
-   # Extend the path accordingly
-   #
-   set(kaleidoscope_hardware_dir_guess 
-      "${kaleidoscope_hardware_dir_guess}/hardware/keyboardio")
-#    message("kaleidoscope_hardware_dir_guess=${kaleidoscope_hardware_dir_guess}")
-else()
-   # We have no clue where to look for the hardware directory.
-   #
-   set(kaleidoscope_hardware_dir_guess "<undefined>")
-endif()
-
-# Make the hardware directory user configurable by defining a cache variable.
-#
-set(KALEIDOSCOPE_HARDWARE_DIR "${kaleidoscope_hardware_dir_guess}" 
-   CACHE PATH "The path to the Kaleidoscope hardware directory")
-
-if(NOT EXISTS "${KALEIDOSCOPE_HARDWARE_DIR}")
-   message(FATAL_ERROR "Unable to find \
-KALEIDOSCOPE_HARDWARE_DIR=${KALEIDOSCOPE_HARDWARE_DIR}")
-endif()
-
-set(kaleidoscope_lib_dir "${KALEIDOSCOPE_HARDWARE_DIR}/avr/libraries")
-
 # Make the firmware sketch user configurable.
 #
 set(KALEIDOSCOPE_FIRMWARE_SKETCH 
-   "${kaleidoscope_lib_dir}/${KALEIDOSCOPE_KEYBOARD_HARDWARE}-Firmware\
-/${KALEIDOSCOPE_KEYBOARD_HARDWARE}-Firmware.ino"
+   "${kaleidoscope_lib_dir}/${product_id}-Firmware\
+/${product_id}-Firmware.ino"
    CACHE FILEPATH 
    "The path to the Kaleidoscope firmware sketch"
 )
@@ -255,7 +320,7 @@ cmake_minimum_required(VERSION 2.8)
 
 # Uncomment this for detailed debugging of Arduino-CMake output.
 #
-arduino_debug_on()
+# arduino_debug_on()
 
 # Allow the standard directory containing Kaleidoscope libraries
 # to be found. Note: Arduino-CMake relies on this to be defined
@@ -273,29 +338,34 @@ foreach(dir ${dirs})
    include_directories("${dir}/src/Kaleidoscope")
 endforeach()
 
-# Defining KEYBOARDIO_CORES_PATH is necessary as
-# hardware/keyboardio/avr does not come with a "cores"
+# Defining ${vendor_id_upper}_CORES_PATH is necessary as
+# hardware/${vendor_id}/${architecture_id} does not always come with a "cores"
 # directory. This prevents other unrelated directories named 
 # "cores" from being found, e.g. through paths in the users PATH variable.
 #
 # Note: By defining the cache variable INTERNAL, we prevent it from being
 #       listed in configuration GUIs.
 #
-set(KEYBOARDIO_CORES_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/avr/cores" 
+string(TOUPPER "${vendor_id}" vendor_id_upper)
+set(${vendor_id_upper}_CORES_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/${architecture_id}/cores" 
    CACHE INTERNAL "")
    
 # This registers our keyboard hardware with the Arduino-CMake 
 # system. Necessary information is read from files in the Arduino conforming 
-# directory structure available through KALEIDOSCOPE_HARDWARE_DIR.
+# directory structure available through kaleidoscope_vendor_dir.
 #
-register_hardware_platform("${KALEIDOSCOPE_HARDWARE_DIR}")
+register_hardware_platform_bva(
+   "${KALEIDOSCOPE_HARDWARE_BASE_PATH}"
+   "${KALEIDOSCOPE_VENDOR_ID}"
+   "${KALEIDOSCOPE_ARCHITECTURE_ID}"
+)
 
 # Define some additional libraries' sources 
 # that are not found by Arduino-CMake's library autodetection mechanism.
 #
 set(additional_libraries 
-   "Kaleidoscope-Hardware-${KALEIDOSCOPE_KEYBOARD_HARDWARE}"
-   "KeyboardioScanner"
+   "Kaleidoscope-Hardware-${product_id}"
+   ${platform_additional_libraries}
 )
 
 set(all_add_src)
@@ -362,7 +432,7 @@ add_custom_target(
 # Targets taken over from Kaleidoscopes main build system
 ################################################################################
 
-set(plugin_test_support_dir "${KALEIDOSCOPE_HARDWARE_DIR}/avr/build-tools")
+set(plugin_test_support_dir "${kaleidoscope_platform_dir}/build-tools")
 set(plugin_test_bin_dir "${plugin_test_support_dir}/x86_64/bin")
 
 # Add a custom target for the astyle teste
@@ -443,7 +513,7 @@ add_custom_target(
       --filter=-legal/copyright,-build/include,-readability/namespace,,-whitespace/line_length 
       --recursive 
       --extensions=cpp,h,ino 
-      "--exclude=${KALEIDOSCOPE_HARDWARE_DIR}/avr" 
+      "--exclude=${kaleidoscope_platform_dir}" 
       --exclude=${travis_arduino}
       src examples
 )

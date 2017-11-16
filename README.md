@@ -75,13 +75,13 @@ CMake in its current version (3.5.1 on Ubuntu 16.04) supports the following buil
 
 Of course, on Windows other build systems are supported, ammong those also some commercial IDEs. Checkout 
 the list of generators displayed at the end of the text that is output when you enter 
-```
+```bash
 cmake --help
 ```
 
 To support the user, CMake supports several graphical front-ends, whose availability differs between platforms. 
 On Linux, e.g. a curses based GUI is available, that is started with the command
-```
+```bash
 ccmake ..
 ```
          
@@ -92,7 +92,8 @@ at the end of the command.
 
 # Todos
 This is still a work in progress. The following work-packages remain to be done, before this project can be released.
-* Add a complete example that demonstrates how to build the Kaleidoscope stock firmware
+* Cleanup
+* Documentation of all CMake variables
 * Add travis testing of the build system, and explain in this README what is actually tested
 * Add automatic tests that assert binary compatibility of two firmwares that are build with Kaleidoscope-CMake and the stock's Makefile build system
 
@@ -100,7 +101,7 @@ This is still a work in progress. The following work-packages remain to be done,
 ## CMake
 To build with Kaleidoscope-CMake, the CMake build system must be installed. 
 On Ubuntu Linux, e.g. install it as
-```
+```bash
 sudo apt-get install cmake cmake-curses-gui
 ```
 
@@ -108,38 +109,65 @@ sudo apt-get install cmake cmake-curses-gui
 Kaleidoscope-CMake currently depends on a [patched version](https://github.com/noseglasses/arduino-cmake) of 
 [Arduino-CMake](https://github.com/arduino-cmake/arduino-cmake) that is provided as a git submodule in the
 `3rd_party/arduino-cmake` directory of this project.
-As soon as a [pull request](https://github.com/arduino-cmake/arduino-cmake/pull/17) with the 
-changes has been merged. we will go back to using the original [Arduino-CMake](https://github.com/arduino-cmake/arduino-cmake).
+As soon as some pull requests ([1](https://github.com/arduino-cmake/arduino-cmake/pull/17), [2](https://github.com/arduino-cmake/arduino-cmake/pull/19)) have been merged to upstream [Arduino-CMake](https://github.com/arduino-cmake/arduino-cmake), we will return to using the original Arduino-CMake.
 
 # For the impatient: A brief example
+The following example shows how Kaleidoscope-CMake can be used to build the stock firmware on a
+Linux system using GNU make as build system.
 
-TODO: Exemplify how to build the stock firmware (see the content of `stock_firmware_test.sh`).
-This build system currently requires a modified version of Kaleidoscope to work, for
-a bug report see [here](https://github.com/keyboardio/Arduino-Boards/issues/9).
+```bash
+TARGET_DIR=<your_prefered_test_location>
+cd ${TARGET_DIR}
+
+# Clone the keyboardio arduino boards the standard way
+#
+mkdir -p hardware/keyboardio
+git clone --recursive https://github.com/keyboardio/Arduino-Boards.git \
+    hardware/keyboardio/avr
+
+# Clone Kaleidoscope-CMake as a sibling to the stock plugins
+#
+cd hardware/keyboardio/avr/libraries
+git clone --recursive https://github.com/noseglasses/Kaleidoscope-CMake.git
+
+# Generate and change to a build directory
+#
+cd ${TARGET_DIR}
+mkdir build
+cd build
+
+# Configure the build system
+#
+cmake ${TARGET_DIR}/hardware/keyboardio/avr/libraries/Kaleidoscope-CMake
+
+# Run the build
+#
+make
+```
 
 # Usage
 To build with CMake and GNU make on a Linux platform, do the following.
 
 1. Clone the Kaleidoscope-CMake repository to your `.../hardware/keyboardio/avr/libraries` folder.
-```
+```bash
 cd <a_suitable_path>/hardware/keyboardio/avr/libraries
 git clone --recursive https://github.com/noseglasses/Kaleidoscope-CMake.git
 ```
 
 2. Generate an (out-of-source) build directory
-```
+```bash
 cd Kaleidoscope-CMake
 mkdir build
 cd build
 ```
 
 3. Setup the CMake build system (this will use CMake's default generator for your platform)
-```
+```bash
 cmake ..
 ```
 
 4. Build
-```
+```bash
 make
 ```
 
@@ -147,11 +175,11 @@ Instructions for other systems (Windows, OSX) can slightly vary. Please consult 
 
 # Upload
 To upload the firmware, enter the following (assuming you selected the `Unix Makefiles` generator).
-```
+```bash
 make upload
 ```
 In general (for any arbitrary generator), enter the somewhat more detailed command
-```
+```bash
 cmake --build . --target upload
 ```
 
@@ -161,7 +189,7 @@ that allow to use all cores of a multi-core machine to shorten build times.
 
 To build in parallel using 8 threads, using GNU make, run 
 
-```
+```bash
 make -j 8
 ```
 
@@ -177,7 +205,7 @@ finishing almost completed builds. It is at least very much faster than GNU make
 
 If you want to use Ninja to build Kaleidoscope, do as follows
 
-```
+```bash
 # On Ubuntu Linux
 sudo apt-get install ninja-build
 
@@ -192,7 +220,7 @@ ninja
 
 For all build system (including those listed above), the build process can also be triggered
 as
-```
+```bash
 cmake --build . [--target <target>]
 ```
 after the build system has been configured.
@@ -204,15 +232,15 @@ which tries to build the firmware.
 
 The targets available can be shown using the `help` target, either
 as 
-```
+```bash
 cmake --build . --target help
 ```
 or
-```
+```bash
 make help
 ```
 or
-```
+```bash
 ninja help
 ```
 depending of the CMake Generator that has been selected.
@@ -224,14 +252,14 @@ the `help` target is executed. For each source that is compiled there are three 
 file with extension `.obj`, `.i` and `.s`. 
 
 | Extension | Purpose                                               |
-| --------- |:-----------------------------------------------------:|
+|:--------- |:----------------------------------------------------- |
 | `.obj`    | Compiles an object file                               |
 | `.i`      | Pre-processes the file and stops after pre-processing |
 | `.s`      | Compiles and generates assembly code                  |
 
 For a file `.../my_source.cpp` there will, e.g. a target `.../my_source.i` that
 can be triggered as
-```
+```bash
 cmake --build . --target .../my_source.i
 ```
 The output of the pre-processing process the follows informs about the
@@ -248,7 +276,7 @@ A symbol list can be output by using the `nm` target.
 The `Unix Makefiles` generator supports the generation of verbose makefiles. Those
 allow for extra verbose debugging output that can easily be toggled 
 via the environment variable `VERBOSE`, e.g.
-```
+```bash
 VERBOSE=1 make
 ```
 
@@ -260,25 +288,21 @@ The following table provides an overview of configuration variables that are
 available to tweak the CMake build system.
 
 | CMake Variable                  | Purpose                                                           |
-| ------------------------------- |:-----------------------------------------------------------------:|
-| KALEIDOSCOPE_HARDWARE_DIR       | An absolute path to the `.../hardware/keyboardio` directory.      |     
-|                                 | This is only necessary, if Kaleidoscope-CMake is not              |
-|                                 | cloned to the `.../hardware/keyboardio/avr/libraries` directory   |
+|:------------------------------- |:----------------------------------------------------------------- |
+| KALEIDOSCOPE_HARDWARE_DIR       | An absolute path to the `.../hardware/keyboardio` directory.<br>This is only necessary, if Kaleidoscope-CMake is not<br>cloned to the `.../hardware/keyboardio/avr/libraries` directory   |
 | KALEIDOSCOPE_KEYBOARD_HARDWARE  | The keyboard hardware (currently one of Model01, Raise, Shortcut) |
 | KALEIDOSCOPE_FIRMWARE_SKETCH    | Filepath of the Arduino sketch (the *.ino) file                   |
-| KALEIDOSCOPE_ARDUINO_PROGRAMMER | The programmer to be used (see the [Arduino-CMake documentation](https://github.com/arduino-cmake/arduino-cmake) |
-|                                 | for more information on available programmers)                    |
-| KALEIDOSCOPE_DOWNLOAD_ARDUINO   | If this flag is enabled, the build system automatically downloads |
-|                                 | Arduino during the configuration phase.                           |
+| KALEIDOSCOPE_ARDUINO_PROGRAMMER | The programmer to be used (see the [Arduino-CMake documentation](https://github.com/arduino-cmake/arduino-cmake)<br>for more information on available programmers)                    |
+| KALEIDOSCOPE_DOWNLOAD_ARDUINO   | If this flag is enabled, the build system automatically downloads<br> Arduino during the configuration phase.                           |
 
 The value of a variable can either be set at the CMake command line during the configuration
 stage, e.g. as
-```
+```bash
 cmake -DKALEIDOSCOPE_KEYBOARD_HARDWARE="Shortcut" ..
 ```
 or it can be modified later on using one of CMake's GUIs, e.g. the curses GUI (Unix/Linux) that
 is started as
-```
+```bash
 ccmake ..
 ```
 
