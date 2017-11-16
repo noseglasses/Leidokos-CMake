@@ -55,6 +55,8 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
       )
    endif()
+   
+   set(ARDUINO_SDK_PATH "${CMAKE_BINARY_DIR}/${travis_arduino}" CACHE PATH "")
 endif()
 
 # Make sure that the correct avr-gcc of the arduino installation
