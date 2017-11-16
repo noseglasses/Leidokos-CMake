@@ -11,10 +11,10 @@ script:
   - git clone --recursive https://github.com/keyboardio/Arduino-Boards.git hardware/keyboardio/avr
   - cd hardware/keyboardio/avr/libraries
   - git clone --recursive https://github.com/noseglasses/Kaleidoscope-CMake.git
-  - cd ${TARGET_DIR}
+  - cd $HOME
   - mkdir build
   - cd build
-  - cmake -DKALEIDOSCOPE_DOWNLOAD_ARDUINO=TRUE ${TARGET_DIR}/hardware/keyboardio/avr/libraries/Kaleidoscope-CMake
+  - cmake -DKALEIDOSCOPE_DOWNLOAD_ARDUINO=TRUE $HOME/hardware/keyboardio/avr/libraries/Kaleidoscope-CMake
   - make nm_diff
 notifications:
   email:
