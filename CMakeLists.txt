@@ -52,6 +52,7 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
       file(DOWNLOAD "${travis_arduino_download_url}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}" SHOW_PROGRESS)
       execute_process(
          COMMAND "${CMAKE_COMMAND}" -E tar xvf "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
+         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
       )
    endif()
 endif()
@@ -624,7 +625,7 @@ if(NOT diff_result EQUAL 0)
    message(\"\${error}\")
    message(FATAL_ERROR \"Aborting.\")
 else()
-   message(\"Success: Both firmwares do contain the same symbols\")
+   message(\"Success: Both firmwares contain the same symbols\")
 endif()
 ")
 

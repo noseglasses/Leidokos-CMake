@@ -98,11 +98,6 @@ file (`CMakeLists.txt`) resides. In the example above, we assumed the command to
 from a directory that is one level below the Kaleidoscope-CMake root directory, therefore the `..` 
 at the end of the command.
 
-# Todos
-This is still a work in progress. The following work-packages remain to be done, before this project can be released.
-* Add travis testing of the build system, and explain in this README what is actually tested
-* Add automatic tests that assert binary compatibility of two firmwares that are build with Kaleidoscope-CMake and the stock's Makefile build system
-
 # Prerequisites
 ## CMake
 To build with Kaleidoscope-CMake, the CMake build system must be installed. 
@@ -324,4 +319,5 @@ work on other platforms, too.
 Testers working with other platforms are highly welcome! 
 
 # Travis-testing
-TODO: Add a description of travis testing of the build system
+Currently we test if the build system actually builds the stock firmware and if the symbols in the firmware that
+is build do match those of the stock firmware if build with the legacy GNU make build system.
