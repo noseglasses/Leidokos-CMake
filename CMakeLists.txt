@@ -49,9 +49,9 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
 
    if(NOT EXISTS "${travis_arduino_path}")
       message("Installing Arduino...")
-      file(DOWNLOAD "${travis_arduino_download_url}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}" SHOW_PROGRESS)
+      file(DOWNLOAD "${travis_arduino_download_url}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}")
       execute_process(
-         COMMAND "${CMAKE_COMMAND}" -E tar xvf "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
+         COMMAND "${CMAKE_COMMAND}" -E tar xf "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
       )
    endif()
