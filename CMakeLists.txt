@@ -576,7 +576,7 @@ set(stock_build_script "${cmake_scripts_dir}/stock_build.script.cmake")
 file(WRITE "${stock_build_script}" "\
 set(ENV{BOARD_HARDWARE_PATH} \"${KALEIDOSCOPE_HARDWARE_BASE_PATH}\")
 set(ENV{ARDUINO_SDK_PATH} \"${ARDUINO_SDK_PATH}\")
-set(ENV{ARDUINO_PATH} \"${ARDUINO_PATH}\")
+set(ENV{ARDUINO_PATH} \"${ARDUINO_SDK_PATH}\")
 
 execute_process(
    COMMAND make
