@@ -571,10 +571,12 @@ add_dependencies(firmware_test "${kaleidoscope_firmware_target}" check-astyle cp
 
 # Add a custom target for the astyle tests
 #
-set(legacy_build_script "${cmake_scripts_dir}/legacy_build.script.cmake")
+set(stock_build_script "${cmake_scripts_dir}/stock_build.script.cmake")
 
-file(WRITE "${legacy_build_script}" "\
+file(WRITE "${stock_build_script}" "\
 set(ENV{BOARD_HARDWARE_PATH} \"${KALEIDOSCOPE_HARDWARE_BASE_PATH}\")
+set(ENV{ARDUINO_SDK_PATH} \"${ARDUINO_SDK_PATH}\")
+set(ENV{ARDUINO_PATH} \"${ARDUINO_PATH}\")
 
 execute_process(
    COMMAND make
@@ -583,9 +585,9 @@ execute_process(
 ")
 
 add_custom_target(
-   legacy_build
-   COMMAND "${CMAKE_COMMAND}" -P "${legacy_build_script}"
-   COMMENT "Running astyle to check code style compliance"
+   stock_build
+   COMMAND "${CMAKE_COMMAND}" -P "${stock_build_script}"
+   COMMENT "Running a build with the stock firmware"
 )
 
 add_custom_target(
@@ -594,7 +596,7 @@ add_custom_target(
    COMMENT "Comparing to firmware build with stock build system"
 )
 
-add_dependencies(firmware_binary_check legacy_build "${kaleidoscope_firmware_target}")
+add_dependencies(firmware_binary_check stock_build "${kaleidoscope_firmware_target}")
 
 set(nm_diff_script "${cmake_scripts_dir}/nm_diff.script.cmake")
 file(WRITE "${nm_diff_script}" "\
@@ -637,4 +639,4 @@ add_custom_target(
    COMMENT "Comparing nm output of legacy and new build system"
 )
 
-add_dependencies(nm_diff legacy_build "${kaleidoscope_firmware_target}")
+add_dependencies(nm_diff stock_build "${kaleidoscope_firmware_target}")
