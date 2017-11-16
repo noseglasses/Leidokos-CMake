@@ -1,0 +1,25 @@
+dist: trusty
+sudo: false
+os:
+  - linux
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y cmake
+script:
+  - cd $HOME
+  - mkdir -p hardware/keyboardio
+  - git clone --recursive https://github.com/keyboardio/Arduino-Boards.git hardware/keyboardio/avr
+  - cd hardware/keyboardio/avr/libraries
+  - git clone --recursive https://github.com/noseglasses/Kaleidoscope-CMake.git
+  - cd ${TARGET_DIR}
+  - mkdir build
+  - cd build
+  - cmake -DKALEIDOSCOPE_DOWNLOAD_ARDUINO=TRUE ${TARGET_DIR}/hardware/keyboardio/avr/libraries/Kaleidoscope-CMake
+  - make nm_diff
+notifications:
+  email:
+    recipients:
+      - shinynoseglasses@gmail.com
+    on_failure: always
+cache:
+ccache: true

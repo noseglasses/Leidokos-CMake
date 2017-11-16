@@ -92,8 +92,6 @@ at the end of the command.
 
 # Todos
 This is still a work in progress. The following work-packages remain to be done, before this project can be released.
-* Cleanup
-* Documentation of all CMake variables
 * Add travis testing of the build system, and explain in this README what is actually tested
 * Add automatic tests that assert binary compatibility of two firmwares that are build with Kaleidoscope-CMake and the stock's Makefile build system
 
@@ -290,10 +288,14 @@ available to tweak the CMake build system.
 | CMake Variable                  | Purpose                                                           |
 |:------------------------------- |:----------------------------------------------------------------- |
 | KALEIDOSCOPE_HARDWARE_DIR       | An absolute path to the `.../hardware/keyboardio` directory.<br>This is only necessary, if Kaleidoscope-CMake is not<br>cloned to the `.../hardware/keyboardio/avr/libraries` directory   |
-| KALEIDOSCOPE_KEYBOARD_HARDWARE  | The keyboard hardware (currently one of Model01, Raise, Shortcut) |
+| KALEIDOSCOPE_BOARD              | The keyboard hardware |
 | KALEIDOSCOPE_FIRMWARE_SKETCH    | Filepath of the Arduino sketch (the *.ino) file                   |
 | KALEIDOSCOPE_ARDUINO_PROGRAMMER | The programmer to be used (see the [Arduino-CMake documentation](https://github.com/arduino-cmake/arduino-cmake)<br>for more information on available programmers)                    |
 | KALEIDOSCOPE_DOWNLOAD_ARDUINO   | If this flag is enabled, the build system automatically downloads<br> Arduino during the configuration phase.                           |
+| KALEIDOSCOPE_HARDWARE_BASE_PATH | A path to the `.../hardware` directory below which <br>
+hardware definitions are situated |
+| KALEIDOSCOPE_VENDOR_ID          | The vendor ID of the target keyboard |
+| KALEIDOSCOPE_ARCHITECTURE_ID    | The target keyboard's architecture (e.g. avr) |
 
 The value of a variable can either be set at the CMake command line during the configuration
 stage, e.g. as
