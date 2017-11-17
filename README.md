@@ -1,5 +1,6 @@
 ![status][st:experimental] [![Build Status][travis:image]][travis:status]
 
+[travis:image]: https://travis-ci.org/noseglasses/Kaleidoscope-CMake.svg?branch=master
 [travis:status]: https://travis-ci.org/noseglasses/Kaleidoscope-CMake
 
 [st:stable]: https://img.shields.io/badge/stable-✔-black.svg?style=flat&colorA=44cc11&colorB=494e52
