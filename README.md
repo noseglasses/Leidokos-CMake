@@ -291,7 +291,6 @@ available to tweak the CMake build system.
 
 | CMake Variable                  | Purpose                                                           |
 |:------------------------------- |:----------------------------------------------------------------- |
-| KALEIDOSCOPE_HARDWARE_DIR       | An absolute path to the `.../hardware/keyboardio` directory.<br>This is only necessary, if Kaleidoscope-CMake is not<br>cloned to the `.../hardware/keyboardio/avr/libraries` directory   |
 | KALEIDOSCOPE_BOARD              | The keyboard hardware |
 | KALEIDOSCOPE_FIRMWARE_SKETCH    | Filepath of the Arduino sketch (the *.ino) file                   |
 | KALEIDOSCOPE_ARDUINO_PROGRAMMER | The programmer to be used (see the [Arduino-CMake documentation](https://github.com/arduino-cmake/arduino-cmake)<br>for more information on available programmers)                    |
