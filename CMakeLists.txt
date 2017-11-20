@@ -19,11 +19,6 @@
 #
 # This is an alternative build system for the Kaleidoscope keyboard
 # firmware.
-#
-# This CMakeLists.txt file assumes, that the Kaleidoscope-CMake
-# project is checked out in .../hardware/<default_vendor_id>/<default_architecture_id>/libraries.
-# If so, it is able to autodetect all necessary paths of the 
-# Kaleidoscope firmware.
 # 
 # The following definintions must occur before the toolchain
 # file is included below, to make them visible to Arduino-CMakes build
@@ -32,8 +27,47 @@
 # The toolchain file is used when the project is initialized using
 # the project(...) directive further down.
 #
-set(CMAKE_TOOLCHAIN_FILE 
-   "${CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/ArduinoToolchain.cmake")
+set(KALEIDOSCOPE_HOST_BUILD FALSE CACHE BOOL "Enable this flag in the \
+rare case that you want to build for the host system instead of the \
+Arduino architecture (virtual builds)")
+
+if(NOT KALEIDOSCOPE_HOST_BUILD)
+   set(CMAKE_TOOLCHAIN_FILE 
+      "${CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/ArduinoToolchain.cmake")
+
+   # Add some additional compiler command line flags that are needed
+   # to build Kaleidoscope.
+   #
+   set(ARDUINO_CXX_FLAGS 
+      "\
+   -std=gnu++11 \
+   -Wall \
+   -Wextra \
+   -fno-threadsafe-statics \
+   -fno-exceptions \
+   -ffunction-sections \
+   -fdata-sections\
+   ")
+else()
+
+   # Define empty flags. Else Arduino-CMake will define something Arduino
+   # specific, which we have to avoid for host builds.
+   #
+   set(ARDUINO_C_FLAGS "")
+   set(ARDUINO_CXX_FLAGS "\
+   -std=gnu++11 \
+   -Wall \
+   -Wextra \
+   ")
+   
+   set(ARDUINO_LIBRARIES_PATH "___dummy__")
+   
+   # Include Arduino.cmake directly to avoid Arduino toolchain setup as
+   # it would be performed through defining CMAKE_TOOLCHAIN_FILE
+   # as done in the platform build setup above.
+   #
+   include("${CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Arduino.cmake")
+endif()
    
 set(KALEIDOSCOPE_DOWNLOAD_ARDUINO FALSE CACHE BOOL "If this flag is \
 enabled, the build system downloads Arduino")
@@ -75,20 +109,6 @@ elseif(NOT "$ENV{ARDUINO_PATH}" STREQUAL "")
 elseif(NOT "$ENV{ARDUINO_SDK_PATH}" STREQUAL "")
    set(CMAKE_PREFIX_PATH "$ENV{ARDUINO_SDK_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
 endif()
-
-# Add some additional compiler command line flags that are needed
-# to build Kaleidoscope.
-#
-set(ARDUINO_CXX_FLAGS 
-   "\
--std=gnu++11 \
--Wall \
--Wextra \
--fno-threadsafe-statics \
--fno-exceptions \
--ffunction-sections \
--fdata-sections\
-")
 
 # Initialize the CMake project. This uses the CMAKE_TOOLCHAIN_FILE
 # defined above and implicitly includes 
@@ -225,6 +245,9 @@ set(kaleidoscope_libraries_dir "${kaleidoscope_platform_dir}/libraries")
 # system. Necessary information is read from files in the Arduino conforming 
 # directory structure available through kaleidoscope_vendor_dir.
 #
+message("Registering new hardware in \"${KALEIDOSCOPE_HARDWARE_BASE_PATH}/\
+${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}")
+
 register_hardware_platform_bva(
    "${KALEIDOSCOPE_HARDWARE_BASE_PATH}"
    "${KALEIDOSCOPE_VENDOR_ID}"
@@ -258,7 +281,7 @@ set(KALEIDOSCOPE_BOARD "${default_board}" CACHE STRING
 # Based on the keyboard name, we set some alternative name string variables
 # that are used in the configurations below
 #
-set(hardware_definition_file "${CMAKE_SOURCE_DIR}/hardware/${default_vendor_id}/${default_architecture_id}/${KALEIDOSCOPE_BOARD}.cmake")
+set(hardware_definition_file "${CMAKE_SOURCE_DIR}/hardware/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}/${KALEIDOSCOPE_BOARD}.cmake")
 
 if(NOT EXISTS "${hardware_definition_file}")
    message(FATAL_ERROR "Unnable to find hardware definition file \"${hardware_definition_file}\" for \
@@ -373,15 +396,15 @@ foreach(dir ${dirs})
 endforeach()
 
 # Defining ${vendor_id_upper}_CORES_PATH is necessary as
-# hardware/${default_vendor_id}/${default_architecture_id} does not always come with a "cores"
+# hardware/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID} does not always come with a "cores"
 # directory. This prevents other unrelated directories named 
 # "cores" from being found, e.g. through paths in the users PATH variable.
 #
 # Note: By defining the cache variable INTERNAL, we prevent it from being
 #       listed in configuration GUIs.
 #
-string(TOUPPER "${default_vendor_id}" vendor_id_upper)
-set(${vendor_id_upper}_CORES_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/${default_architecture_id}/cores" 
+string(TOUPPER "${KALEIDOSCOPE_VENDOR_ID}" vendor_id_upper)
+set(${vendor_id_upper}_CORES_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/${KALEIDOSCOPE_ARCHITECTURE_ID}/cores" 
    CACHE INTERNAL "")
 
 # Define some additional libraries' sources 

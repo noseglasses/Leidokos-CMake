@@ -297,6 +297,8 @@ available to tweak the CMake build system.
 | KALEIDOSCOPE_DOWNLOAD_ARDUINO   | If this flag is enabled, the build system automatically downloads<br> Arduino during the configuration phase.                           |
 | KALEIDOSCOPE_HARDWARE_BASE_PATH | A path to the `.../hardware` directory below which <br>
 hardware definitions are situated |
+| KALEIDOSCOPE_HOST_BUILD         | Enable this flag if you want to build for the host system instead of the Arduino architecture 
+(virtual build) |
 | KALEIDOSCOPE_VENDOR_ID          | The vendor ID of the target keyboard |
 | KALEIDOSCOPE_ARCHITECTURE_ID    | The target keyboard's architecture (e.g. avr) |
 
