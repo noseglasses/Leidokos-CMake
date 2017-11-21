@@ -58,6 +58,7 @@ else()
    -std=gnu++11 \
    -Wall \
    -Wextra \
+   -DARDUINO_VIRTUAL \
    ")
    
    set(ARDUINO_LIBRARIES_PATH "___dummy__")
@@ -239,7 +240,8 @@ if(NOT EXISTS "${kaleidoscope_platform_dir}")
    message(FATAL_ERROR "Aborting.")
 endif()
 
-set(kaleidoscope_libraries_dir "${kaleidoscope_platform_dir}/libraries")
+set(KALEIDOSCOPE_LIBRARIES_DIR "${kaleidoscope_platform_dir}/libraries" CACHE PATH 
+   "A path to the libraries directory where the Kaleidoscope libraries live")
 
 # This registers our keyboard hardware with the Arduino-CMake 
 # system. Necessary information is read from files in the Arduino conforming 
@@ -327,7 +329,7 @@ endif()
 # Make the firmware sketch user configurable.
 #
 set(KALEIDOSCOPE_FIRMWARE_SKETCH 
-   "${kaleidoscope_libraries_dir}/${product_id}-Firmware\
+   "${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware\
 /${product_id}-Firmware.ino"
    CACHE FILEPATH 
    "The path to the Kaleidoscope firmware sketch"
@@ -383,12 +385,12 @@ set(ARDUINO_CMAKE_RECURSION_DEFAULT TRUE CACHE INTERNAL "")
 # to be found. Note: Arduino-CMake relies on this to be defined
 # to search for Arduino libraries.
 #
-link_directories("${kaleidoscope_libraries_dir}")
+link_directories("${KALEIDOSCOPE_LIBRARIES_DIR}")
 
 # Make sure that all Arduino library dirs are exported 
 # as include (-I...) directories.
 #
-file(GLOB dirs "${kaleidoscope_libraries_dir}/*")
+file(GLOB dirs "${KALEIDOSCOPE_LIBRARIES_DIR}/*")
 foreach(dir ${dirs})
    include_directories("${dir}")
    include_directories("${dir}/src")
@@ -412,7 +414,7 @@ set(${vendor_id_upper}_CORES_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/${KALEID
 #
 set(all_add_src)
 foreach(add_lib ${platform_additional_libraries})
-   file(GLOB_RECURSE add_src "${kaleidoscope_libraries_dir}/${add_lib}/*.cpp")
+   file(GLOB_RECURSE add_src "${KALEIDOSCOPE_LIBRARIES_DIR}/${add_lib}/*.cpp")
    list(APPEND all_add_src ${add_src})
 endforeach()
 
@@ -603,7 +605,7 @@ set(ENV{ARDUINO_PATH} \"${ARDUINO_SDK_PATH}\")
 
 execute_process(
    COMMAND make
-   WORKING_DIRECTORY \"${kaleidoscope_libraries_dir}/${product_id}-Firmware\"
+   WORKING_DIRECTORY \"${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware\"
 )
 ")
 
@@ -615,7 +617,7 @@ add_custom_target(
 
 add_custom_target(
    firmware_binary_check
-   COMMAND diff "${kaleidoscope_libraries_dir}/${product_id}-Firmware/output/${product_id}-Firmware/${product_id}-Firmware-latest.elf" "${CMAKE_BINARY_DIR}/${kaleidoscope_firmware_target}.elf"
+   COMMAND diff "${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware/output/${product_id}-Firmware/${product_id}-Firmware-latest.elf" "${CMAKE_BINARY_DIR}/${kaleidoscope_firmware_target}.elf"
    COMMENT "Comparing to firmware build with stock build system"
 )
 
@@ -625,7 +627,7 @@ set(nm_diff_script "${cmake_scripts_dir}/nm_diff.script.cmake")
 file(WRITE "${nm_diff_script}" "\
 set(nm_out_legacy \"${CMAKE_BINARY_DIR}/nm_legacy.txt\")
 execute_process(
-   COMMAND \"${AVRNM_PROGRAM}\" -C \"${kaleidoscope_libraries_dir}/${product_id}-Firmware/output/${product_id}-Firmware/${product_id}-Firmware-latest.elf\"
+   COMMAND \"${AVRNM_PROGRAM}\" -C \"${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware/output/${product_id}-Firmware/${product_id}-Firmware-latest.elf\"
    COMMAND cut \"-d \" -f3
    COMMAND sort
    OUTPUT_FILE \"\${nm_out_legacy}\"

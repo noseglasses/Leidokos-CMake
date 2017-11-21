@@ -301,6 +301,7 @@ hardware definitions are situated |
 (virtual build) |
 | KALEIDOSCOPE_VENDOR_ID          | The vendor ID of the target keyboard |
 | KALEIDOSCOPE_ARCHITECTURE_ID    | The target keyboard's architecture (e.g. avr) |
+| KALEIDOSCOPE_LIBRARIES_DIR      | The path to the libraries directory where the Kaleidoscope modules live (must only be explicitly set when this path is not below KALEIDOSCOPE_HARDWARE_BASE_PATH) |
 
 The value of a variable can either be set at the CMake command line during the configuration
 stage, e.g. as
