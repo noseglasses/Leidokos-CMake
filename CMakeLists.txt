@@ -428,14 +428,16 @@ endforeach()
 set(ARDUINO_CMAKE_BLACKLISTED_ARDUINO_LIBS 
    "\
 ${ARDUINO_SDK_PATH}/libraries/Keyboard/src;\
-${ARDUINO_SDK_PATH}/libraries/Mouse/src"
+${ARDUINO_SDK_PATH}/libraries/Mouse/src;\
+${blacklisted_libraries}\
+"
    CACHE INTERNAL "")
    
-add_definitions(
-"-DKALEIDOSCOPE_HARDWARE_H=\"Kaleidoscope-Hardware-${product_id}.h\""
-"-DUSB_MANUFACTURER=\"${usb_manufacturer}\""
-"-DUSB_PRODUCT=\"${usb_product}\""
-)
+# add_definitions(
+# "-DKALEIDOSCOPE_HARDWARE_H=\"Kaleidoscope-Hardware-${product_id}.h\""
+# "-DUSB_MANUFACTURER=\"${usb_manufacturer}\""
+# "-DUSB_PRODUCT=\"${usb_product}\""
+# )
 
 generate_arduino_firmware(
    "${kaleidoscope_firmware_target}" # CMake target name
@@ -445,6 +447,13 @@ generate_arduino_firmware(
    PORT "${device_port}"
    PROGRAMMER "${KALEIDOSCOPE_ARDUINO_PROGRAMMER}"
 )
+
+# The configure_firmware_target function can be defined in custom
+# hardware files in hardware/... subdirectories of this project
+#
+if(COMMAND configure_firmware_target)
+   configure_firmware_target("${kaleidoscope_firmware_target}")
+endif()
 
 ################################################################################
 # Additional targets for maintainance
