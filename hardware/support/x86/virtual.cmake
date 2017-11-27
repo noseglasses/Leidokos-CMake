@@ -2,8 +2,8 @@ set(product_id "Virtual")
 set(board_id "virtual")
 set(usb_product "Virtual")
 set(usb_manufacturer "Nowbody")
-set(platform_additional_libraries 
-    "Kaleidoscope-Hardware-${product_id}")#;KeyboardioScanner")
+# set(platform_additional_libraries 
+#     "Kaleidoscope-Hardware-${product_id}")#;KeyboardioScanner")
    
 # The distinction between guest and virtual HID libraries is done via
 # a #ifdef clause in the source code. This cannot be handled 

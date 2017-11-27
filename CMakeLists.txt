@@ -23,7 +23,17 @@
 # The following definintions must occur before the toolchain
 # file is included below, to make them visible to Arduino-CMakes build
 # system.
-#z
+
+# To enable Kaleidoscope-CMake to be included in other 
+# CMake projects' CMakeLists.txt files, we use KALEIDOSCOPE_CMAKE_SOURCE_DIR
+# instead of CMAKE_SOURCE_DIR. KALEIDOSCOPE_CMAKE_SOURCE_DIR
+# can be set by the including CMake code.
+#
+set(KALEIDOSCOPE_CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}"
+   CACHE PATH "The path to the Kaleidoscope-CMake sources. This is only \"
+required to be set when Kaleidoscope-CMake is wrapped \
+by other CMake build systems")
+
 # The toolchain file is used when the project is initialized using
 # the project(...) directive further down.
 #
@@ -33,7 +43,7 @@ Arduino architecture (virtual builds)")
 
 if(NOT KALEIDOSCOPE_HOST_BUILD)
    set(CMAKE_TOOLCHAIN_FILE 
-      "${CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/ArduinoToolchain.cmake")
+      "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/ArduinoToolchain.cmake")
 
    # Add some additional compiler command line flags that are needed
    # to build Kaleidoscope.
@@ -58,7 +68,7 @@ else()
    -std=gnu++11 \
    -Wall \
    -Wextra \
-   -DARDUINO_VIRTUAL \
+   -DARDUINO_VIRTUAL\
    ")
    
    set(ARDUINO_LIBRARIES_PATH "___dummy__")
@@ -67,7 +77,7 @@ else()
    # it would be performed through defining CMAKE_TOOLCHAIN_FILE
    # as done in the platform build setup above.
    #
-   include("${CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Arduino.cmake")
+   include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Arduino.cmake")
 endif()
    
 set(KALEIDOSCOPE_DOWNLOAD_ARDUINO FALSE CACHE BOOL "If this flag is \
@@ -113,7 +123,7 @@ endif()
 
 # Initialize the CMake project. This uses the CMAKE_TOOLCHAIN_FILE
 # defined above and implicitly includes 
-# ${CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Arduino.cmake
+# ${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Arduino.cmake
 #
 project(Kaleidoscope)
 cmake_minimum_required(VERSION 2.8)
@@ -135,7 +145,7 @@ function(find_hardware_base_path__
    # we search for. As we do a string search in the path, we have to make sure 
    # that any symbolic links and ".." are removed first.
    #
-   get_filename_component(cmake_source_dir_realpath "${CMAKE_SOURCE_DIR}" REALPATH)
+   get_filename_component(cmake_source_dir_realpath "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}" REALPATH)
    string(FIND "${cmake_source_dir_realpath}" 
       "/hardware/" find_pos REVERSE)
       
@@ -196,7 +206,8 @@ endmacro()
 # Both the binary and the source tree could be below
 # a hardware directory.
 #
-find_hardware_base_path("${CMAKE_BINARY_DIR};${CMAKE_SOURCE_DIR}")
+get_filename_component(below_libs_directory "${CMAKE_SOURCE_DIR}" PATH)
+find_hardware_base_path("${CMAKE_BINARY_DIR};${below_libs_directory}")#;${KALEIDOSCOPE_CMAKE_SOURCE_DIR}")
 
 if(NOT default_hardware_base_path)
 
@@ -206,10 +217,6 @@ if(NOT default_hardware_base_path)
    set(default_vendor_id "<undefined>")
    set(default_architecture_id  "<undefined>")
 endif()
-
-# message("default_hardware_base_path: ${default_hardware_base_path}")
-# message("default_vendor_id: ${default_vendor_id}")
-# message("default_architecture_id: ${default_architecture_id}")
 
 # Make the hardware base directory, the vendor id and the architecture id
 # user configurable through a CMake cache variable.
@@ -283,7 +290,7 @@ set(KALEIDOSCOPE_BOARD "${default_board}" CACHE STRING
 # Based on the keyboard name, we set some alternative name string variables
 # that are used in the configurations below
 #
-set(hardware_definition_file "${CMAKE_SOURCE_DIR}/hardware/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}/${KALEIDOSCOPE_BOARD}.cmake")
+set(hardware_definition_file "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/hardware/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}/${KALEIDOSCOPE_BOARD}.cmake")
 
 if(NOT EXISTS "${hardware_definition_file}")
    message(FATAL_ERROR "Unnable to find hardware definition file \"${hardware_definition_file}\" for \
@@ -432,17 +439,21 @@ ${ARDUINO_SDK_PATH}/libraries/Mouse/src;\
 ${blacklisted_libraries}\
 "
    CACHE INTERNAL "")
-   
-# add_definitions(
-# "-DKALEIDOSCOPE_HARDWARE_H=\"Kaleidoscope-Hardware-${product_id}.h\""
-# "-DUSB_MANUFACTURER=\"${usb_manufacturer}\""
-# "-DUSB_PRODUCT=\"${usb_product}\""
-# )
+
+set(KALEIDOSCOPE_ADDITIONAL_HEADERS "" CACHE STRING
+   "A list of absolute paths of header files that are included in the \
+firmware build. This is only required for advanced use, e.g. when \
+Kaleidoscope-CMake is embedded in another CMake build system")
+
+if(NOT "${KALEIDOSCOPE_ADDITIONAL_HEADERS}" STREQUAL "")
+   set(add_headers HDRS ${KALEIDOSCOPE_ADDITIONAL_HEADERS})
+endif()
 
 generate_arduino_firmware(
    "${kaleidoscope_firmware_target}" # CMake target name
    BOARD "${board_id}"
    SKETCH "${KALEIDOSCOPE_FIRMWARE_SKETCH}"
+   ${add_headers}
    SRCS ${all_add_src}
    PORT "${device_port}"
    PROGRAMMER "${KALEIDOSCOPE_ARDUINO_PROGRAMMER}"
@@ -455,6 +466,21 @@ if(COMMAND configure_firmware_target)
    configure_firmware_target("${kaleidoscope_firmware_target}")
 endif()
 
+# Allow to assign an alternative filename for the output file
+#
+if(COMMAND kaleidoscope_set_binary_basename)
+   kaleidoscope_set_binary_basename(binary_basename_default)
+endif()
+set(KALEIDOSCOPE_BINARY_BASENAME "${binary_basename_default}" CACHE STRING 
+   "An alternative name for the generated firmware binary. The default name is used if empty.")
+   
+if(NOT "${KALEIDOSCOPE_BINARY_BASENAME}" STREQUAL "")
+   set_target_properties("${kaleidoscope_firmware_target}" 
+      PROPERTIES OUTPUT_NAME "${KALEIDOSCOPE_BINARY_BASENAME}")
+   set_target_properties("${kaleidoscope_firmware_target}" PROPERTIES PREFIX "")
+   set_target_properties("${kaleidoscope_firmware_target}" PROPERTIES SUFFIX "")
+endif()
+   
 ################################################################################
 # Additional targets for maintainance
 ################################################################################
