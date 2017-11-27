@@ -19,21 +19,66 @@
 #
 # This is an alternative build system for the Kaleidoscope keyboard
 # firmware.
-#
-# This CMakeLists.txt file assumes, that the Kaleidoscope-CMake
-# project is checked out in .../hardware/<default_vendor_id>/<default_architecture_id>/libraries.
-# If so, it is able to autodetect all necessary paths of the 
-# Kaleidoscope firmware.
 # 
 # The following definintions must occur before the toolchain
 # file is included below, to make them visible to Arduino-CMakes build
 # system.
-#z
+
+# To enable Kaleidoscope-CMake to be included in other 
+# CMake projects' CMakeLists.txt files, we use KALEIDOSCOPE_CMAKE_SOURCE_DIR
+# instead of CMAKE_SOURCE_DIR. KALEIDOSCOPE_CMAKE_SOURCE_DIR
+# can be set by the including CMake code.
+#
+set(KALEIDOSCOPE_CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}"
+   CACHE PATH "The path to the Kaleidoscope-CMake sources. This is only \"
+required to be set when Kaleidoscope-CMake is wrapped \
+by other CMake build systems")
+
 # The toolchain file is used when the project is initialized using
 # the project(...) directive further down.
 #
-set(CMAKE_TOOLCHAIN_FILE 
-   "${CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/ArduinoToolchain.cmake")
+set(KALEIDOSCOPE_HOST_BUILD FALSE CACHE BOOL "Enable this flag in the \
+rare case that you want to build for the host system instead of the \
+Arduino architecture (virtual builds)")
+
+if(NOT KALEIDOSCOPE_HOST_BUILD)
+   set(CMAKE_TOOLCHAIN_FILE 
+      "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/ArduinoToolchain.cmake")
+
+   # Add some additional compiler command line flags that are needed
+   # to build Kaleidoscope.
+   #
+   set(ARDUINO_CXX_FLAGS 
+      "\
+   -std=gnu++11 \
+   -Wall \
+   -Wextra \
+   -fno-threadsafe-statics \
+   -fno-exceptions \
+   -ffunction-sections \
+   -fdata-sections\
+   ")
+else()
+
+   # Define empty flags. Else Arduino-CMake will define something Arduino
+   # specific, which we have to avoid for host builds.
+   #
+   set(ARDUINO_C_FLAGS "")
+   set(ARDUINO_CXX_FLAGS "\
+   -std=gnu++11 \
+   -Wall \
+   -Wextra \
+   -DARDUINO_VIRTUAL\
+   ")
+   
+   set(ARDUINO_LIBRARIES_PATH "___dummy__")
+   
+   # Include Arduino.cmake directly to avoid Arduino toolchain setup as
+   # it would be performed through defining CMAKE_TOOLCHAIN_FILE
+   # as done in the platform build setup above.
+   #
+   include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Arduino.cmake")
+endif()
    
 set(KALEIDOSCOPE_DOWNLOAD_ARDUINO FALSE CACHE BOOL "If this flag is \
 enabled, the build system downloads Arduino")
@@ -76,23 +121,9 @@ elseif(NOT "$ENV{ARDUINO_SDK_PATH}" STREQUAL "")
    set(CMAKE_PREFIX_PATH "$ENV{ARDUINO_SDK_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
 endif()
 
-# Add some additional compiler command line flags that are needed
-# to build Kaleidoscope.
-#
-set(ARDUINO_CXX_FLAGS 
-   "\
--std=gnu++11 \
--Wall \
--Wextra \
--fno-threadsafe-statics \
--fno-exceptions \
--ffunction-sections \
--fdata-sections\
-")
-
 # Initialize the CMake project. This uses the CMAKE_TOOLCHAIN_FILE
 # defined above and implicitly includes 
-# ${CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Arduino.cmake
+# ${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Arduino.cmake
 #
 project(Kaleidoscope)
 cmake_minimum_required(VERSION 2.8)
@@ -114,7 +145,7 @@ function(find_hardware_base_path__
    # we search for. As we do a string search in the path, we have to make sure 
    # that any symbolic links and ".." are removed first.
    #
-   get_filename_component(cmake_source_dir_realpath "${CMAKE_SOURCE_DIR}" REALPATH)
+   get_filename_component(cmake_source_dir_realpath "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}" REALPATH)
    string(FIND "${cmake_source_dir_realpath}" 
       "/hardware/" find_pos REVERSE)
       
@@ -175,7 +206,8 @@ endmacro()
 # Both the binary and the source tree could be below
 # a hardware directory.
 #
-find_hardware_base_path("${CMAKE_BINARY_DIR};${CMAKE_SOURCE_DIR}")
+get_filename_component(below_libs_directory "${CMAKE_SOURCE_DIR}" PATH)
+find_hardware_base_path("${CMAKE_BINARY_DIR};${below_libs_directory}")#;${KALEIDOSCOPE_CMAKE_SOURCE_DIR}")
 
 if(NOT default_hardware_base_path)
 
@@ -185,10 +217,6 @@ if(NOT default_hardware_base_path)
    set(default_vendor_id "<undefined>")
    set(default_architecture_id  "<undefined>")
 endif()
-
-# message("default_hardware_base_path: ${default_hardware_base_path}")
-# message("default_vendor_id: ${default_vendor_id}")
-# message("default_architecture_id: ${default_architecture_id}")
 
 # Make the hardware base directory, the vendor id and the architecture id
 # user configurable through a CMake cache variable.
@@ -219,12 +247,16 @@ if(NOT EXISTS "${kaleidoscope_platform_dir}")
    message(FATAL_ERROR "Aborting.")
 endif()
 
-set(kaleidoscope_libraries_dir "${kaleidoscope_platform_dir}/libraries")
+set(KALEIDOSCOPE_LIBRARIES_DIR "${kaleidoscope_platform_dir}/libraries" CACHE PATH 
+   "A path to the libraries directory where the Kaleidoscope libraries live")
 
 # This registers our keyboard hardware with the Arduino-CMake 
 # system. Necessary information is read from files in the Arduino conforming 
 # directory structure available through kaleidoscope_vendor_dir.
 #
+message("Registering new hardware in \"${KALEIDOSCOPE_HARDWARE_BASE_PATH}/\
+${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}")
+
 register_hardware_platform_bva(
    "${KALEIDOSCOPE_HARDWARE_BASE_PATH}"
    "${KALEIDOSCOPE_VENDOR_ID}"
@@ -258,7 +290,7 @@ set(KALEIDOSCOPE_BOARD "${default_board}" CACHE STRING
 # Based on the keyboard name, we set some alternative name string variables
 # that are used in the configurations below
 #
-set(hardware_definition_file "${CMAKE_SOURCE_DIR}/hardware/${default_vendor_id}/${default_architecture_id}/${KALEIDOSCOPE_BOARD}.cmake")
+set(hardware_definition_file "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/hardware/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}/${KALEIDOSCOPE_BOARD}.cmake")
 
 if(NOT EXISTS "${hardware_definition_file}")
    message(FATAL_ERROR "Unnable to find hardware definition file \"${hardware_definition_file}\" for \
@@ -304,7 +336,7 @@ endif()
 # Make the firmware sketch user configurable.
 #
 set(KALEIDOSCOPE_FIRMWARE_SKETCH 
-   "${kaleidoscope_libraries_dir}/${product_id}-Firmware\
+   "${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware\
 /${product_id}-Firmware.ino"
    CACHE FILEPATH 
    "The path to the Kaleidoscope firmware sketch"
@@ -360,12 +392,12 @@ set(ARDUINO_CMAKE_RECURSION_DEFAULT TRUE CACHE INTERNAL "")
 # to be found. Note: Arduino-CMake relies on this to be defined
 # to search for Arduino libraries.
 #
-link_directories("${kaleidoscope_libraries_dir}")
+link_directories("${KALEIDOSCOPE_LIBRARIES_DIR}")
 
 # Make sure that all Arduino library dirs are exported 
 # as include (-I...) directories.
 #
-file(GLOB dirs "${kaleidoscope_libraries_dir}/*")
+file(GLOB dirs "${KALEIDOSCOPE_LIBRARIES_DIR}/*")
 foreach(dir ${dirs})
    include_directories("${dir}")
    include_directories("${dir}/src")
@@ -373,15 +405,15 @@ foreach(dir ${dirs})
 endforeach()
 
 # Defining ${vendor_id_upper}_CORES_PATH is necessary as
-# hardware/${default_vendor_id}/${default_architecture_id} does not always come with a "cores"
+# hardware/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID} does not always come with a "cores"
 # directory. This prevents other unrelated directories named 
 # "cores" from being found, e.g. through paths in the users PATH variable.
 #
 # Note: By defining the cache variable INTERNAL, we prevent it from being
 #       listed in configuration GUIs.
 #
-string(TOUPPER "${default_vendor_id}" vendor_id_upper)
-set(${vendor_id_upper}_CORES_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/${default_architecture_id}/cores" 
+string(TOUPPER "${KALEIDOSCOPE_VENDOR_ID}" vendor_id_upper)
+set(${vendor_id_upper}_CORES_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/${KALEIDOSCOPE_ARCHITECTURE_ID}/cores" 
    CACHE INTERNAL "")
 
 # Define some additional libraries' sources 
@@ -389,7 +421,7 @@ set(${vendor_id_upper}_CORES_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/${defaul
 #
 set(all_add_src)
 foreach(add_lib ${platform_additional_libraries})
-   file(GLOB_RECURSE add_src "${kaleidoscope_libraries_dir}/${add_lib}/*.cpp")
+   file(GLOB_RECURSE add_src "${KALEIDOSCOPE_LIBRARIES_DIR}/${add_lib}/*.cpp")
    list(APPEND all_add_src ${add_src})
 endforeach()
 
@@ -403,24 +435,52 @@ endforeach()
 set(ARDUINO_CMAKE_BLACKLISTED_ARDUINO_LIBS 
    "\
 ${ARDUINO_SDK_PATH}/libraries/Keyboard/src;\
-${ARDUINO_SDK_PATH}/libraries/Mouse/src"
+${ARDUINO_SDK_PATH}/libraries/Mouse/src;\
+${blacklisted_libraries}\
+"
    CACHE INTERNAL "")
-   
-add_definitions(
-"-DKALEIDOSCOPE_HARDWARE_H=\"Kaleidoscope-Hardware-${product_id}.h\""
-"-DUSB_MANUFACTURER=\"${usb_manufacturer}\""
-"-DUSB_PRODUCT=\"${usb_product}\""
-)
+
+set(KALEIDOSCOPE_ADDITIONAL_HEADERS "" CACHE STRING
+   "A list of absolute paths of header files that are included in the \
+firmware build. This is only required for advanced use, e.g. when \
+Kaleidoscope-CMake is embedded in another CMake build system")
+
+if(NOT "${KALEIDOSCOPE_ADDITIONAL_HEADERS}" STREQUAL "")
+   set(add_headers HDRS ${KALEIDOSCOPE_ADDITIONAL_HEADERS})
+endif()
 
 generate_arduino_firmware(
    "${kaleidoscope_firmware_target}" # CMake target name
    BOARD "${board_id}"
    SKETCH "${KALEIDOSCOPE_FIRMWARE_SKETCH}"
+   ${add_headers}
    SRCS ${all_add_src}
    PORT "${device_port}"
    PROGRAMMER "${KALEIDOSCOPE_ARDUINO_PROGRAMMER}"
 )
 
+# The configure_firmware_target function can be defined in custom
+# hardware files in hardware/... subdirectories of this project
+#
+if(COMMAND configure_firmware_target)
+   configure_firmware_target("${kaleidoscope_firmware_target}")
+endif()
+
+# Allow to assign an alternative filename for the output file
+#
+if(COMMAND kaleidoscope_set_binary_basename)
+   kaleidoscope_set_binary_basename(binary_basename_default)
+endif()
+set(KALEIDOSCOPE_BINARY_BASENAME "${binary_basename_default}" CACHE STRING 
+   "An alternative name for the generated firmware binary. The default name is used if empty.")
+   
+if(NOT "${KALEIDOSCOPE_BINARY_BASENAME}" STREQUAL "")
+   set_target_properties("${kaleidoscope_firmware_target}" 
+      PROPERTIES OUTPUT_NAME "${KALEIDOSCOPE_BINARY_BASENAME}")
+   set_target_properties("${kaleidoscope_firmware_target}" PROPERTIES PREFIX "")
+   set_target_properties("${kaleidoscope_firmware_target}" PROPERTIES SUFFIX "")
+endif()
+   
 ################################################################################
 # Additional targets for maintainance
 ################################################################################
@@ -580,7 +640,7 @@ set(ENV{ARDUINO_PATH} \"${ARDUINO_SDK_PATH}\")
 
 execute_process(
    COMMAND make
-   WORKING_DIRECTORY \"${kaleidoscope_libraries_dir}/${product_id}-Firmware\"
+   WORKING_DIRECTORY \"${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware\"
 )
 ")
 
@@ -592,7 +652,7 @@ add_custom_target(
 
 add_custom_target(
    firmware_binary_check
-   COMMAND diff "${kaleidoscope_libraries_dir}/${product_id}-Firmware/output/${product_id}-Firmware/${product_id}-Firmware-latest.elf" "${CMAKE_BINARY_DIR}/${kaleidoscope_firmware_target}.elf"
+   COMMAND diff "${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware/output/${product_id}-Firmware/${product_id}-Firmware-latest.elf" "${CMAKE_BINARY_DIR}/${kaleidoscope_firmware_target}.elf"
    COMMENT "Comparing to firmware build with stock build system"
 )
 
@@ -602,7 +662,7 @@ set(nm_diff_script "${cmake_scripts_dir}/nm_diff.script.cmake")
 file(WRITE "${nm_diff_script}" "\
 set(nm_out_legacy \"${CMAKE_BINARY_DIR}/nm_legacy.txt\")
 execute_process(
-   COMMAND \"${AVRNM_PROGRAM}\" -C \"${kaleidoscope_libraries_dir}/${product_id}-Firmware/output/${product_id}-Firmware/${product_id}-Firmware-latest.elf\"
+   COMMAND \"${AVRNM_PROGRAM}\" -C \"${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware/output/${product_id}-Firmware/${product_id}-Firmware-latest.elf\"
    COMMAND cut \"-d \" -f3
    COMMAND sort
    OUTPUT_FILE \"\${nm_out_legacy}\"

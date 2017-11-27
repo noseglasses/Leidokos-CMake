@@ -291,15 +291,20 @@ available to tweak the CMake build system.
 
 | CMake Variable                  | Purpose                                                           |
 |:------------------------------- |:----------------------------------------------------------------- |
-| KALEIDOSCOPE_HARDWARE_DIR       | An absolute path to the `.../hardware/keyboardio` directory.<br>This is only necessary, if Kaleidoscope-CMake is not<br>cloned to the `.../hardware/keyboardio/avr/libraries` directory   |
 | KALEIDOSCOPE_BOARD              | The keyboard hardware |
 | KALEIDOSCOPE_FIRMWARE_SKETCH    | Filepath of the Arduino sketch (the *.ino) file                   |
 | KALEIDOSCOPE_ARDUINO_PROGRAMMER | The programmer to be used (see the [Arduino-CMake documentation](https://github.com/arduino-cmake/arduino-cmake)<br>for more information on available programmers)                    |
 | KALEIDOSCOPE_DOWNLOAD_ARDUINO   | If this flag is enabled, the build system automatically downloads<br> Arduino during the configuration phase.                           |
 | KALEIDOSCOPE_HARDWARE_BASE_PATH | A path to the `.../hardware` directory below which <br>
 hardware definitions are situated |
+| KALEIDOSCOPE_HOST_BUILD         | Enable this flag if you want to build for the host system instead of the Arduino architecture 
+(virtual build) |
 | KALEIDOSCOPE_VENDOR_ID          | The vendor ID of the target keyboard |
 | KALEIDOSCOPE_ARCHITECTURE_ID    | The target keyboard's architecture (e.g. avr) |
+| KALEIDOSCOPE_LIBRARIES_DIR      | The path to the libraries directory where the Kaleidoscope modules live (must only be explicitly set when this path is not below KALEIDOSCOPE_HARDWARE_BASE_PATH) |
+| KALEIDOSCOPE_CMAKE_SOURCE_DIR   | The path to the Kaleidoscope-CMake sources. This is only required to be set when Kaleidoscope-CMake is wrapped by other CMake build systems |
+| KALEIDOSCOPE_ADDITIONAL_HEADERS | A list of absolute paths of header files that are included in the firmware build. This is only required for advanced use, e.g. when Kaleidoscope-CMake is embedded in another CMake build system |
+| KALEIDOSCOPE_BINARY_BASENAME    | An alternative name for the generated firmware binary. The default name is used if empty |
 
 The value of a variable can either be set at the CMake command line during the configuration
 stage, e.g. as
