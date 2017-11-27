@@ -425,6 +425,24 @@ foreach(add_lib ${platform_additional_libraries})
    list(APPEND all_add_src ${add_src})
 endforeach()
 
+set(KALEIDOSCOPE_ADDITIONAL_SOURCES "" CACHE STRING
+   "A list of absolute paths of source files that are included in the \
+firmware build. This is only required for advanced use, e.g. when \
+Kaleidoscope-CMake is embedded in another CMake build system")
+
+if(NOT "${KALEIDOSCOPE_ADDITIONAL_SOURCES}" STREQUAL "")
+   list(APPEND all_add_src ${KALEIDOSCOPE_ADDITIONAL_SOURCES})
+endif()
+
+set(KALEIDOSCOPE_ADDITIONAL_HEADERS "" CACHE STRING
+   "A list of absolute paths of header files that are included in the \
+firmware build. This is only required for advanced use, e.g. when \
+Kaleidoscope-CMake is embedded in another CMake build system")
+
+if(NOT "${KALEIDOSCOPE_ADDITIONAL_HEADERS}" STREQUAL "")
+   set(add_headers HDRS ${KALEIDOSCOPE_ADDITIONAL_HEADERS})
+endif()
+
 # Prevent some of Arduino's standard libraries to be found. This
 # is necessary as there is a Keyboard.h header in the Kaleidoscope
 # project. Arduino-CMake searches for libraries with names equal
@@ -439,15 +457,6 @@ ${ARDUINO_SDK_PATH}/libraries/Mouse/src;\
 ${blacklisted_libraries}\
 "
    CACHE INTERNAL "")
-
-set(KALEIDOSCOPE_ADDITIONAL_HEADERS "" CACHE STRING
-   "A list of absolute paths of header files that are included in the \
-firmware build. This is only required for advanced use, e.g. when \
-Kaleidoscope-CMake is embedded in another CMake build system")
-
-if(NOT "${KALEIDOSCOPE_ADDITIONAL_HEADERS}" STREQUAL "")
-   set(add_headers HDRS ${KALEIDOSCOPE_ADDITIONAL_HEADERS})
-endif()
 
 generate_arduino_firmware(
    "${kaleidoscope_firmware_target}" # CMake target name
