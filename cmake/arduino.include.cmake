@@ -16,6 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+set(KALEIDOSCOPE_DOWNLOAD_ARDUINO FALSE CACHE BOOL "If this flag is \
+enabled, the build system downloads Arduino.")
+
 if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
 
    if(NOT EXISTS "${travis_arduino_path}")

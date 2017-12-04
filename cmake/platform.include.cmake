@@ -118,3 +118,86 @@ if(NOT EXISTS "${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
    message(FATAL_ERROR "Unable to find \
 KALEIDOSCOPE_HARDWARE_BASE_PATH=${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
 endif()
+
+if(COMMAND kaleidoscope_cmake_after_configure_platform_hook)
+   kaleidoscope_cmake_after_configure_platform_hook()
+endif()
+
+# Check the platform directory's validity
+
+set(kaleidoscope_platform_dir 
+   "${KALEIDOSCOPE_HARDWARE_BASE_PATH}/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}")
+
+if(NOT EXISTS "${kaleidoscope_platform_dir}")
+   message(SEND_ERROR "Unable to find platform directory \"${kaleidoscope_platform_dir}\"")
+   message(SEND_ERROR "The following CMake variables are related:")
+   message(SEND_ERROR "   KALEIDOSCOPE_HARDWARE_BASE_PATH = ${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
+   message(SEND_ERROR "   KALEIDOSCOPE_VENDOR_ID = ${KALEIDOSCOPE_VENDOR_ID}")
+   message(SEND_ERROR "   KALEIDOSCOPE_ARCHITECTURE_ID = ${KALEIDOSCOPE_ARCHITECTURE_ID}")
+   message(FATAL_ERROR "Aborting.")
+endif()
+
+set(KALEIDOSCOPE_LIBRARIES_DIR "${kaleidoscope_platform_dir}/libraries" CACHE PATH 
+   "A path to the libraries directory where the Kaleidoscope libraries live.")
+   
+# This registers our keyboard hardware with the Arduino-CMake 
+# system. Necessary information is read from files in the Arduino conforming 
+# directory structure available through kaleidoscope_vendor_dir.
+#
+message("Registering new hardware in \"${KALEIDOSCOPE_HARDWARE_BASE_PATH}/\
+${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}")
+
+register_hardware_platform_bva(
+   "${KALEIDOSCOPE_HARDWARE_BASE_PATH}"
+   "${KALEIDOSCOPE_VENDOR_ID}"
+   "${KALEIDOSCOPE_ARCHITECTURE_ID}"
+)
+
+string(TOUPPER "${KALEIDOSCOPE_VENDOR_ID}" vendor_id_upper)
+
+# Generate a default name for the board setting
+#
+# Allow for the BOARD env variable to be captured
+# to achieve similar behavior as with Kaleidoscope's own
+# build system
+#
+if(NOT "$ENV{BOARD}" STREQUAL "")
+   set(default_board "$ENV{BOARD}")
+else()
+#    list(LENGTH ${vendor_id_upper}_BOARDS n_boards_found)
+#    if(n_boards_found GREATER 0)
+#       list(GET ${vendor_id_upper}_BOARDS 0 default_board)
+#    endif()
+   set(default_board "model01")
+endif()
+
+# Let the user choose a name of the target arduino board
+#
+set(KALEIDOSCOPE_BOARD "${default_board}" CACHE STRING
+   "The type of board hardware. \
+   Currently supported: ${${vendor_id_upper}_BOARDS} .")
+   
+# Based on the keyboard name, we set some alternative name string variables
+# that are used in the configurations below
+#
+set(hardware_definition_file "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/hardware/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}/${KALEIDOSCOPE_BOARD}.cmake")
+
+if(NOT EXISTS "${hardware_definition_file}")
+   message(FATAL_ERROR "Unnable to find hardware definition file \"${hardware_definition_file}\" for \
+KALEIDOSCOPE_BOARD=${KALEIDOSCOPE_BOARD}")
+else()
+   include("${hardware_definition_file}")
+endif()
+
+# Make the firmware sketch user configurable.
+#
+set(KALEIDOSCOPE_FIRMWARE_SKETCH 
+   "${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware\
+/${product_id}-Firmware.ino"
+   CACHE FILEPATH 
+   "The path to the Kaleidoscope firmware sketch"
+)
+
+if(NOT EXISTS "${KALEIDOSCOPE_FIRMWARE_SKETCH}")
+   message(FATAL_ERROR "Unable to find KALEIDOSCOPE_FIRMWARE_SKETCH=\"${KALEIDOSCOPE_FIRMWARE_SKETCH}\"")
+endif()

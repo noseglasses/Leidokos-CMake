@@ -15,7 +15,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# The toolchain file is used when the project is initialized using
+# the project(...) directive further down.
 #
+set(KALEIDOSCOPE_HOST_BUILD FALSE CACHE BOOL "Enable this flag in the \
+rare case that you want to build for the host system instead of the \
+Arduino architecture (virtual builds).")
+
 if(NOT KALEIDOSCOPE_HOST_BUILD)
    set(CMAKE_TOOLCHAIN_FILE 
       "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/ArduinoToolchain.cmake")

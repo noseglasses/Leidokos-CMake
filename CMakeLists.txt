@@ -15,14 +15,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-#
+
 # This is an alternative build system for the Kaleidoscope keyboard
 # firmware.
-# 
-# The following definintions must occur before the toolchain
-# file is included below, to make them visible to Arduino-CMakes build
-# system.
 
 # To enable Kaleidoscope-CMake to be included in other 
 # CMake projects' CMakeLists.txt files, we use KALEIDOSCOPE_CMAKE_SOURCE_DIR
@@ -34,512 +29,70 @@ set(KALEIDOSCOPE_CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}"
 required to be set when Kaleidoscope-CMake is wrapped \
 by other CMake build systems.")
 
-# The toolchain file is used when the project is initialized using
-# the project(...) directive further down.
-#
-set(KALEIDOSCOPE_HOST_BUILD FALSE CACHE BOOL "Enable this flag in the \
-rare case that you want to build for the host system instead of the \
-Arduino architecture (virtual builds).")
+macro(_include_cmake file_basename_)
+   include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/cmake/${file_basename_}.include.cmake")
+endmacro()
 
-include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/cmake/configure_cross_build.include.cmake")
-   
-set(KALEIDOSCOPE_DOWNLOAD_ARDUINO FALSE CACHE BOOL "If this flag is \
-enabled, the build system downloads Arduino.")
+################################################################################
+# General setup of the CMake build system
+################################################################################
 
-include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/cmake/prepare_travis.include.cmake")
+_include_cmake(cmake_system)
 
-include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/cmake/prepare_arduino.include.cmake")
+################################################################################
+# Setup the build system for builds that target Arduino platforms but
+# also for host builds (virtual builds).
+################################################################################
 
-# Initialize the CMake project. This uses the CMAKE_TOOLCHAIN_FILE
-# defined above and implicitly includes 
-# ${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Arduino.cmake
-#
+_include_cmake(cross_build)
+
+################################################################################
+# Configure travis testing with Kaleidoscope-CMake.
+################################################################################
+
+_include_cmake(travis)
+
+################################################################################
+# Configure Arduino search paths and download Arduino if necessary.
+################################################################################
+
+_include_cmake(arduino)
+
 project(Kaleidoscope)
 cmake_minimum_required(VERSION 2.8)
 
 ################################################################################
-# Setup and variable definitions
+# Configure the target platform hardware.
 ################################################################################
 
-include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/cmake/configure_platform.include.cmake")
-
-if(COMMAND kaleidoscope_cmake_after_configure_platform_hook)
-   kaleidoscope_cmake_after_configure_platform_hook()
-endif()
-
-# Check the platform directory's validity
-
-set(kaleidoscope_platform_dir 
-   "${KALEIDOSCOPE_HARDWARE_BASE_PATH}/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}")
-
-if(NOT EXISTS "${kaleidoscope_platform_dir}")
-   message(SEND_ERROR "Unable to find platform directory \"${kaleidoscope_platform_dir}\"")
-   message(SEND_ERROR "The following CMake variables are related:")
-   message(SEND_ERROR "   KALEIDOSCOPE_HARDWARE_BASE_PATH = ${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
-   message(SEND_ERROR "   KALEIDOSCOPE_VENDOR_ID = ${KALEIDOSCOPE_VENDOR_ID}")
-   message(SEND_ERROR "   KALEIDOSCOPE_ARCHITECTURE_ID = ${KALEIDOSCOPE_ARCHITECTURE_ID}")
-   message(FATAL_ERROR "Aborting.")
-endif()
-
-set(KALEIDOSCOPE_LIBRARIES_DIR "${kaleidoscope_platform_dir}/libraries" CACHE PATH 
-   "A path to the libraries directory where the Kaleidoscope libraries live.")
-
-# This registers our keyboard hardware with the Arduino-CMake 
-# system. Necessary information is read from files in the Arduino conforming 
-# directory structure available through kaleidoscope_vendor_dir.
-#
-message("Registering new hardware in \"${KALEIDOSCOPE_HARDWARE_BASE_PATH}/\
-${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}")
-
-register_hardware_platform_bva(
-   "${KALEIDOSCOPE_HARDWARE_BASE_PATH}"
-   "${KALEIDOSCOPE_VENDOR_ID}"
-   "${KALEIDOSCOPE_ARCHITECTURE_ID}"
-)
-
-string(TOUPPER "${KALEIDOSCOPE_VENDOR_ID}" vendor_id_upper)
-
-# Generate a default name for the board setting
-#
-# Allow for the BOARD env variable to be captured
-# to achieve similar behavior as with Kaleidoscope's own
-# build system
-#
-if(NOT "$ENV{BOARD}" STREQUAL "")
-   set(default_board "$ENV{BOARD}")
-else()
-#    list(LENGTH ${vendor_id_upper}_BOARDS n_boards_found)
-#    if(n_boards_found GREATER 0)
-#       list(GET ${vendor_id_upper}_BOARDS 0 default_board)
-#    endif()
-   set(default_board "model01")
-endif()
-
-# Let the user choose a name of the target arduino board
-#
-set(KALEIDOSCOPE_BOARD "${default_board}" CACHE STRING
-   "The type of board hardware. \
-   Currently supported: ${${vendor_id_upper}_BOARDS} .")
-   
-# Based on the keyboard name, we set some alternative name string variables
-# that are used in the configurations below
-#
-set(hardware_definition_file "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/hardware/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}/${KALEIDOSCOPE_BOARD}.cmake")
-
-if(NOT EXISTS "${hardware_definition_file}")
-   message(FATAL_ERROR "Unnable to find hardware definition file \"${hardware_definition_file}\" for \
-KALEIDOSCOPE_BOARD=${KALEIDOSCOPE_BOARD}")
-else()
-   include("${hardware_definition_file}")
-endif()
-
-# Determine the device port for flashing
-# (taken over from keyboardio/avr/libraries/Kaleidoscope/etc/kaleidoscope-builder.conf)
-#
-if(APPLE)
-
-   macro(get_device_port cmd_)
-      if("${device_port}" STREQUAL "")
-         execute_process(
-            COMMAND ${cmd_}
-            OUTPUT_VARIABLE device_port
-         )
-      endif()
-   endmacro()
-   
-   get_device_port("ls /dev/cu.usbmodemCkbio*")
-   get_device_port("ls /dev/cu.usbmodemCkbio*")
-   get_device_port("ls /dev/cu.usbmodemHID*")
-   get_device_port("ls /dev/cu.usbmodemCHID*")
-   get_device_port("ls /dev/cu.usbmodem14*")
-
-else()
-   execute_process(
-      COMMAND ls /dev/ttyACM*
-      OUTPUT_VARIABLE device_port
-   )
-endif()
-
-if("${device_port}" STREQUAL "")
-   message(WARNING 
-"Unable to determine keyboard device port. \
-Is the keyboard actually connected?")
-   set(device_port 10000)
-endif()
-
-# Make the firmware sketch user configurable.
-#
-set(KALEIDOSCOPE_FIRMWARE_SKETCH 
-   "${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware\
-/${product_id}-Firmware.ino"
-   CACHE FILEPATH 
-   "The path to the Kaleidoscope firmware sketch"
-)
-
-if(NOT EXISTS "${KALEIDOSCOPE_FIRMWARE_SKETCH}")
-   message(FATAL_ERROR "Unable to find KALEIDOSCOPE_FIRMWARE_SKETCH=\"${KALEIDOSCOPE_FIRMWARE_SKETCH}\"")
-endif()
-
-# Make the programmer user configurable
-#
-set(programmers "avrisp;avrispmkii;usbtinyisp;parallel;arduinoisp")
-set(KALEIDOSCOPE_ARDUINO_PROGRAMMER 
-   "avrispmkii" CACHE STRING
-   "The firmware programmer to use for flashing (available: ${programmers})."
-)
-
-set(programmer_ok FALSE)
-foreach(programmer ${programmers})
-   if("${KALEIDOSCOPE_ARDUINO_PROGRAMMER}" STREQUAL "${programmer}")
-      set(programmer_ok TRUE)
-      break()
-   endif()
-endforeach()
-if(NOT programmer_ok)
-   message(FATAL_ERROR "Please set KALEIDOSCOPE_ARDUINO_PROGRAMMER to one of the following: ${programmers}")
-endif()
-
-# Some targets require additional CMake scripts that enable using
-# portable CMake code during the build stage.
-#
-set(cmake_scripts_dir "${CMAKE_BINARY_DIR}/cmake_scripts")
-if(NOT EXISTS "${cmake_scripts_dir}")
-   file(MAKE_DIRECTORY "${cmake_scripts_dir}")
-endif()
-
-# kaleidoscope_firmware_target is used as identifier 
-# for auto generated target names.
-#
-set(kaleidoscope_firmware_target "kaleidoscope.firmware")
-
-set(ARDUINO_CMAKE_RECURSION_DEFAULT TRUE CACHE INTERNAL "")
+_include_cmake(platform)
 
 ################################################################################
-# Project generation
+# Configure the device upload
 ################################################################################
 
-# Uncomment this for detailed debugging of Arduino-CMake output.
-#
-# arduino_debug_on()
+_include_cmake(device_upload)
 
-# Allow the standard directory containing Kaleidoscope libraries
-# to be found. Note: Arduino-CMake relies on this to be defined
-# to search for Arduino libraries.
-#
-link_directories("${KALEIDOSCOPE_LIBRARIES_DIR}")
+################################################################################
+# Setup Arduino-CMake
+################################################################################
 
-# Make sure that all Arduino library dirs are exported 
-# as include (-I...) directories.
-#
-file(GLOB dirs "${KALEIDOSCOPE_LIBRARIES_DIR}/*")
-foreach(dir ${dirs})
-   include_directories("${dir}")
-   include_directories("${dir}/src")
-   include_directories("${dir}/src/Kaleidoscope")
-endforeach()
-
-# Defining ${vendor_id_upper}_CORES_PATH is necessary as
-# hardware/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID} does not always come with a "cores"
-# directory. This prevents other unrelated directories named 
-# "cores" from being found, e.g. through paths in the users PATH variable.
-#
-# Note: By defining the cache variable INTERNAL, we prevent it from being
-#       listed in configuration GUIs.
-#
-string(TOUPPER "${KALEIDOSCOPE_VENDOR_ID}" vendor_id_upper)
-set(${vendor_id_upper}_CORES_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/${KALEIDOSCOPE_ARCHITECTURE_ID}/cores" 
-   CACHE INTERNAL "")
-
-# Define some additional libraries' sources 
-# that are not found by Arduino-CMake's library autodetection mechanism.
-#
-set(all_add_src)
-foreach(add_lib ${platform_additional_libraries})
-   file(GLOB_RECURSE add_src "${KALEIDOSCOPE_LIBRARIES_DIR}/${add_lib}/*.cpp")
-   list(APPEND all_add_src ${add_src})
-endforeach()
-
-set(KALEIDOSCOPE_ADDITIONAL_SOURCES "" CACHE STRING
-   "A list of absolute paths of source files that are included in the \
-firmware build. This is only required for advanced use, e.g. when \
-Kaleidoscope-CMake is embedded in another CMake build system.")
-
-if(NOT "${KALEIDOSCOPE_ADDITIONAL_SOURCES}" STREQUAL "")
-   list(APPEND all_add_src ${KALEIDOSCOPE_ADDITIONAL_SOURCES})
-endif()
-
-set(KALEIDOSCOPE_ADDITIONAL_HEADERS "" CACHE STRING
-   "A list of absolute paths of header files that are included in the \
-firmware build. This is only required for advanced use, e.g. when \
-Kaleidoscope-CMake is embedded in another CMake build system.")
-
-if(NOT "${KALEIDOSCOPE_ADDITIONAL_HEADERS}" STREQUAL "")
-   set(add_headers HDRS ${KALEIDOSCOPE_ADDITIONAL_HEADERS})
-endif()
-
-# Prevent some of Arduino's standard libraries to be found. This
-# is necessary as there is a Keyboard.h header in the Kaleidoscope
-# project. Arduino-CMake searches for libraries with names equal
-# to headers. If we would not blacklist such libraries, they
-# would be build and linked and thus lead to ambiguously defined 
-# symbols.
-#
-set(ARDUINO_CMAKE_BLACKLISTED_ARDUINO_LIBS 
-   "\
-${ARDUINO_SDK_PATH}/libraries/Keyboard/src;\
-${ARDUINO_SDK_PATH}/libraries/Mouse/src;\
-${blacklisted_libraries}\
-"
-   CACHE INTERNAL "")
-
-generate_arduino_firmware(
-   "${kaleidoscope_firmware_target}" # CMake target name
-   BOARD "${board_id}"
-   SKETCH "${KALEIDOSCOPE_FIRMWARE_SKETCH}"
-   ${add_headers}
-   SRCS ${all_add_src}
-   PORT "${device_port}"
-   PROGRAMMER "${KALEIDOSCOPE_ARDUINO_PROGRAMMER}"
-)
-
-# The configure_firmware_target function can be defined in custom
-# hardware files in hardware/... subdirectories of this project
-#
-if(COMMAND configure_firmware_target)
-   configure_firmware_target("${kaleidoscope_firmware_target}")
-endif()
-
-# Allow to assign an alternative filename for the output file
-#
-if(COMMAND kaleidoscope_set_binary_basename_hook)
-   kaleidoscope_set_binary_basename_hook(binary_basename_default)
-endif()
-set(KALEIDOSCOPE_BINARY_BASENAME "${binary_basename_default}" CACHE STRING 
-   "An alternative name for the generated firmware binary. The default name is used if empty.")
+_include_cmake(arduino_cmake)
    
-if(NOT "${KALEIDOSCOPE_BINARY_BASENAME}" STREQUAL "")
-   set_target_properties("${kaleidoscope_firmware_target}" 
-      PROPERTIES OUTPUT_NAME "${KALEIDOSCOPE_BINARY_BASENAME}")
-   set_target_properties("${kaleidoscope_firmware_target}" PROPERTIES PREFIX "")
-   set_target_properties("${kaleidoscope_firmware_target}" PROPERTIES SUFFIX "")
-endif()
+################################################################################
+# Configure the firmware build using Arduino-CMake
+################################################################################
+
+_include_cmake(firmware_build)
    
 ################################################################################
 # Additional targets for maintainance
 ################################################################################
 
-# Add a decompile (actual a disassembly) target
-#
-if(NOT AVROBJDUMP_PROGRAM)
-   find_program(AVROBJDUMP_PROGRAM
-            avr-objdump)
-endif()
-
-add_custom_target(
-   decompile
-   COMMAND "${AVROBJDUMP_PROGRAM}" -d "${kaleidoscope_firmware_target}.elf"
-)
-
-add_custom_target(
-   disassembly
-   COMMAND "${AVROBJDUMP_PROGRAM}" -d "${kaleidoscope_firmware_target}.elf"
-)
-
-# Add a target that simplifies listing symbols.
-#
-if(NOT AVRNM_PROGRAM)
-   find_program(AVRNM_PROGRAM
-            avr-nm)
-endif()
-add_custom_target(
-   nm
-   COMMAND "${AVRNM_PROGRAM}" -C "${kaleidoscope_firmware_target}.elf"
-)
+_include_cmake(maintainance_targets)
 
 ################################################################################
 # Targets taken over from Kaleidoscopes main build system
 ################################################################################
 
-set(plugin_test_support_dir "${kaleidoscope_platform_dir}/build-tools")
-set(plugin_test_bin_dir "${plugin_test_support_dir}/x86_64/bin")
-
-# Add a custom target for the astyle teste
-#
-add_custom_target(
-   astyle
-   COMMAND "${plugin_test_support_dir}/run-astyle"
-)
-
-# set(travis_install_arduino_script "${cmake_scripts_dir}/travis_install_arduino.script.cmake")
-# 
-# file(WRITE "${travis_install_arduino_script}"
-# "\
-# if(NOT EXISTS \"${travis_arduino_path}\")
-#    message(\"Installing Arduino...\")
-#    file(DOWNLOAD \"${travis_arduino_download_url}\" \"${CMAKE_BINARY_DIR}/${travis_arduino_file}\" SHOW_PROGRESS)
-#    execute_process(
-#       COMMAND \"${CMAKE_COMMAND}\" -E tar xvf \"${CMAKE_BINARY_DIR}/${travis_arduino_file}\"
-#    )
-# endif()
-# "
-# )
-# 
-# add_custom_command(
-#    OUTPUT "${travis_arduino_path}"
-#    COMMAND "${CMAKE_COMMAND}" -P "${travis_install_arduino_script}"
-#    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
-# )
-#    
-# add_custom_target(travis-install-arduino DEPENDS "${travis_arduino_path}")
-
-add_custom_target(
-   travis-smoke-examples
-#    COMMAND "${CMAKE_COMMAND}" --build . --target travis-install-arduino
-   COMMAND "${CMAKE_COMMAND}" --build . --target "${kaleidoscope_firmware_target}"
-   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
-   COMMENT "Running smoke examples..."
-)
-
-# Add a custom target for the astyle tests
-#
-set(astyle_script "${cmake_scripts_dir}/astyle.script.cmake")
-
-find_program(
-   GIT_PROGRAM 
-   git
-)
-
-file(WRITE "${astyle_script}"
-"\
-set(ENV{PATH} \"${plugin_test_bin_dir}:$ENV{PATH}\")
-execute_process(
-   COMMAND \"${plugin_test_support_dir}/run-astyle\"
-)
-execute_process(
-   COMMAND \"${GIT_PROGRAM}\" diff --exit-code
-   RESULT_VARIABLE result
-)
-if(NOT \"${result}\" EQUAL 0)
-   message(FATAL_ERROR \"Astyle check found code style differences. Please run \\\"cmake --build . --target astyle\\\" and commit your changes\")
-endif()
-"
-)
-
-add_custom_target(
-   travis-check-astyle
-   COMMAND "${CMAKE_COMMAND}" -P "${astyle_script}"
-   COMMENT "Running astyle to check code style compliance"
-)
-	
-add_custom_target(travis-test)
-add_dependencies(travis-test travis-smoke-examples travis-check-astyle)
-
-add_custom_target(
-   cpplint-noisy
-   COMMAND "${plugin_test_support_dir}/cpplint.py"
-      --filter=-legal/copyright,-build/include,-readability/namespace,,-whitespace/line_length 
-      --recursive 
-      --extensions=cpp,h,ino 
-      "--exclude=${kaleidoscope_platform_dir}" 
-      --exclude=${travis_arduino}
-      src examples
-)
-	
-add_custom_target(
-   cpplint
-	COMMAND "${plugin_test_support_dir}/cpplint.py"
-      --quiet 
-      --filter=-whitespace,-legal/copyright,-build/include,-readability/namespace  
-      --recursive 
-      --extensions=cpp,h,ino 
-      src examples
-)
-
-add_custom_target(
-   check-docs
-   COMMAND doxygen "${plugin_test_support_dir}/check-docs.conf"
-	COMMAND python "${plugin_test_support_dir}/doxy-coverage.py" /tmp/undocced/xml
-)
-
-add_custom_target(
-   check-astyle
-	COMMAND "${plugin_test_support_dir}/run-astyle"
-	COMMAND "${GIT_PROGRAM}" diff --exit-code
-)
-
-# Note: The target name test is reserved in CMake for being used with CTest
-#
-add_custom_target(firmware_test)
-add_dependencies(firmware_test "${kaleidoscope_firmware_target}" check-astyle cpplint-noisy check-docs)
-
-# Add a custom target for the astyle tests
-#
-set(stock_build_script "${cmake_scripts_dir}/stock_build.script.cmake")
-
-file(WRITE "${stock_build_script}" "\
-set(ENV{BOARD_HARDWARE_PATH} \"${KALEIDOSCOPE_HARDWARE_BASE_PATH}\")
-set(ENV{ARDUINO_SDK_PATH} \"${ARDUINO_SDK_PATH}\")
-set(ENV{ARDUINO_PATH} \"${ARDUINO_SDK_PATH}\")
-
-execute_process(
-   COMMAND make
-   WORKING_DIRECTORY \"${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware\"
-)
-")
-
-add_custom_target(
-   stock_build
-   COMMAND "${CMAKE_COMMAND}" -P "${stock_build_script}"
-   COMMENT "Running a build with the stock firmware"
-)
-
-add_custom_target(
-   firmware_binary_check
-   COMMAND diff "${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware/output/${product_id}-Firmware/${product_id}-Firmware-latest.elf" "${CMAKE_BINARY_DIR}/${kaleidoscope_firmware_target}.elf"
-   COMMENT "Comparing to firmware build with stock build system"
-)
-
-add_dependencies(firmware_binary_check stock_build "${kaleidoscope_firmware_target}")
-
-set(nm_diff_script "${cmake_scripts_dir}/nm_diff.script.cmake")
-file(WRITE "${nm_diff_script}" "\
-set(nm_out_legacy \"${CMAKE_BINARY_DIR}/nm_legacy.txt\")
-execute_process(
-   COMMAND \"${AVRNM_PROGRAM}\" -C \"${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware/output/${product_id}-Firmware/${product_id}-Firmware-latest.elf\"
-   COMMAND cut \"-d \" -f3
-   COMMAND sort
-   OUTPUT_FILE \"\${nm_out_legacy}\"
-)
-
-set(nm_out_new \"${CMAKE_BINARY_DIR}/nm_new.txt\")
-execute_process(
-   COMMAND \"${AVRNM_PROGRAM}\" -C \"${CMAKE_BINARY_DIR}/${kaleidoscope_firmware_target}.elf\"
-   COMMAND cut \"-d \" -f3
-   COMMAND sort
-   OUTPUT_FILE \"\${nm_out_new}\"
-)
-
-execute_process(
-   COMMAND diff \"\${nm_out_legacy}\" \"\${nm_out_new}\"
-   OUTPUT_VARIABLE output
-   ERROR_VARIABLE error
-   RESULT_VARIABLE diff_result
-)
-
-if(NOT diff_result EQUAL 0)
-   message(\"Legacy and new build differ\")
-   message(\"\${output}\")
-   message(\"\${error}\")
-   message(FATAL_ERROR \"Aborting.\")
-else()
-   message(\"Success: Both firmwares contain the same symbols\")
-endif()
-")
-
-add_custom_target(
-   nm_diff
-   COMMAND "${CMAKE_COMMAND}" -P "${nm_diff_script}"
-   COMMENT "Comparing nm output of legacy and new build system"
-)
-
-add_dependencies(nm_diff stock_build "${kaleidoscope_firmware_target}")
+_include_cmake(kaleidoscope_default_targets)
