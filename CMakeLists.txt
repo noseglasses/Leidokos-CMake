@@ -41,85 +41,14 @@ set(KALEIDOSCOPE_HOST_BUILD FALSE CACHE BOOL "Enable this flag in the \
 rare case that you want to build for the host system instead of the \
 Arduino architecture (virtual builds).")
 
-if(NOT KALEIDOSCOPE_HOST_BUILD)
-   set(CMAKE_TOOLCHAIN_FILE 
-      "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/ArduinoToolchain.cmake")
-
-   # Add some additional compiler command line flags that are needed
-   # to build Kaleidoscope.
-   #
-   set(ARDUINO_CXX_FLAGS 
-      "\
-   -std=gnu++11 \
-   -Wall \
-   -Wextra \
-   -fno-threadsafe-statics \
-   -fno-exceptions \
-   -ffunction-sections \
-   -fdata-sections\
-   ")
-else()
-
-   # Define empty flags. Else Arduino-CMake will define something Arduino
-   # specific, which we have to avoid for host builds.
-   #
-   set(ARDUINO_C_FLAGS "")
-   set(ARDUINO_CXX_FLAGS "\
-   -std=gnu++11 \
-   -Wall \
-   -Wextra \
-   -DARDUINO_VIRTUAL\
-   ")
-   
-   set(ARDUINO_LIBRARIES_PATH "___dummy__")
-   
-   # Include Arduino.cmake directly to avoid Arduino toolchain setup as
-   # it would be performed through defining CMAKE_TOOLCHAIN_FILE
-   # as done in the platform build setup above.
-   #
-   include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Arduino.cmake")
-endif()
+include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/cmake/configure_cross_build.include.cmake")
    
 set(KALEIDOSCOPE_DOWNLOAD_ARDUINO FALSE CACHE BOOL "If this flag is \
 enabled, the build system downloads Arduino.")
 
-# Travis testing settings
-#
-set(travis_arduino "arduino-1.8.5")
-set(travis_arduino_file "${travis_arduino}-linux64.tar.xz")
-set(travis_arduino_path "${CMAKE_BINARY_DIR}/${travis_arduino}")
-set(travis_arduino_download_url "http://downloads.arduino.cc/${travis_arduino_file}")
+include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/cmake/prepare_travis.include.cmake")
 
-if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
-
-   if(NOT EXISTS "${travis_arduino_path}")
-      message("Installing Arduino...")
-      file(DOWNLOAD "${travis_arduino_download_url}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}")
-      execute_process(
-         COMMAND "${CMAKE_COMMAND}" -E tar xf "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
-         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
-      )
-   endif()
-   
-   set(ARDUINO_SDK_PATH "${CMAKE_BINARY_DIR}/${travis_arduino}" CACHE PATH "")
-endif()
-
-# Make sure that the correct avr-gcc of the arduino installation
-# is found. To achieve this we add the path to the Arduino SDK to
-# CMAKE_PREFIX_PATH, which is the path list that CMake uses to search for
-# binaries, libraries, etc.
-#
-# Note: To do this right the toolchain file would need to be modified
-#       to use the actually determined ARDUINO_SDK_PATH to 
-#       define CMAKE_PREFIX_PATH.
-#
-if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
-   set(CMAKE_PREFIX_PATH "${travis_arduino_path}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
-elseif(NOT "$ENV{ARDUINO_PATH}" STREQUAL "")
-   set(CMAKE_PREFIX_PATH "$ENV{ARDUINO_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
-elseif(NOT "$ENV{ARDUINO_SDK_PATH}" STREQUAL "")
-   set(CMAKE_PREFIX_PATH "$ENV{ARDUINO_SDK_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
-endif()
+include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/cmake/prepare_arduino.include.cmake")
 
 # Initialize the CMake project. This uses the CMAKE_TOOLCHAIN_FILE
 # defined above and implicitly includes 
@@ -132,108 +61,13 @@ cmake_minimum_required(VERSION 2.8)
 # Setup and variable definitions
 ################################################################################
 
-# This function tries to find the hardware base path,
-#    i.e. the path that ends as ".../hardware"
-#
-function(find_hardware_base_path__
-   test_dir_
-   base_dir_var_
-   vendor_id_var_
-   architecture_id_var_
-)
-   # First we try, if the "Kaleidoscope-CMake" directory is below the directory
-   # we search for. As we do a string search in the path, we have to make sure 
-   # that any symbolic links and ".." are removed first.
-   #
-   get_filename_component(cmake_source_dir_realpath "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}" REALPATH)
-   string(FIND "${cmake_source_dir_realpath}" 
-      "/hardware/" find_pos REVERSE)
-      
-   # If the string is not found, string(FIND...) returns -1 in find_pos
-   #
-   if(find_pos GREATER -1)
+include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/cmake/configure_platform.include.cmake")
 
-      # The "Kaleidoscope-CMake" directory is obviously a subdirectory
-      # of the directory we are looking for.
-      
-      math(EXPR find_pos "${find_pos} + 9")
-
-      # Get the start of the path up to the place where the search string was 
-      # found
-      #
-      string(SUBSTRING "${cmake_source_dir_realpath}" 0 ${find_pos} 
-         base_dir)
-         
-      string(SUBSTRING "${cmake_source_dir_realpath}" ${find_pos} -1
-         path_remainder)
-      
-      if("${path_remainder}" MATCHES "/([^/]*)/.*")
-         set(default_vendor_id "${CMAKE_MATCH_1}")
-      endif()
-      
-      if("${path_remainder}" MATCHES "/[^/]*/([a-zA-Z0-9_]*)/.*")
-         set(default_architecture_id "${CMAKE_MATCH_1}")
-      endif()
-      
-      set(${base_dir_var_} "${base_dir}" PARENT_SCOPE)
-      set(${vendor_id_var_} "${default_vendor_id}" PARENT_SCOPE)
-      set(${architecture_id_var_} "${default_architecture_id}" PARENT_SCOPE)
-   
-      return()
-   endif()
-   
-   set(${base_dir_var_} "" PARENT_SCOPE)
-   set(${vendor_id_var_} "" PARENT_SCOPE)
-   set(${architecture_id_var_} "" PARENT_SCOPE)
-endfunction()
-
-macro(find_hardware_base_path
-   path_list_
-)
-   foreach(path ${path_list_})
-      find_hardware_base_path__(
-         "${path}"
-         default_hardware_base_path
-         default_vendor_id
-         default_architecture_id
-      )
-      if(default_hardware_base_path)
-         break()
-      endif()
-   endforeach()
-endmacro()
-
-# Both the binary and the source tree could be below
-# a hardware directory.
-#
-get_filename_component(below_libs_directory "${CMAKE_SOURCE_DIR}" PATH)
-find_hardware_base_path("${CMAKE_BINARY_DIR};${below_libs_directory}")#;${KALEIDOSCOPE_CMAKE_SOURCE_DIR}")
-
-if(NOT default_hardware_base_path)
-
-   # We have no clue where to look for the hardware directory.
-   #
-   set(default_hardware_base_path "<undefined>")
-   set(default_vendor_id "<undefined>")
-   set(default_architecture_id  "<undefined>")
+if(COMMAND kaleidoscope_cmake_after_configure_platform_hook)
+   kaleidoscope_cmake_after_configure_platform_hook()
 endif()
 
-# Make the hardware base directory, the vendor id and the architecture id
-# user configurable through a CMake cache variable.
-#
-set(KALEIDOSCOPE_HARDWARE_BASE_PATH "${default_hardware_base_path}" 
-   CACHE PATH "The path to the Kaleidoscope hardware base directory.")
-   
-set(KALEIDOSCOPE_VENDOR_ID "${default_vendor_id}" 
-   CACHE STRING "The vendor id of the board to build a firmware for.")
-
-set(KALEIDOSCOPE_ARCHITECTURE_ID "${default_architecture_id}"
-   CACHE STRING "The architecture id of the board to build a firmware for.")
-
-if(NOT EXISTS "${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
-   message(FATAL_ERROR "Unable to find \
-KALEIDOSCOPE_HARDWARE_BASE_PATH=${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
-endif()
+# Check the platform directory's validity
 
 set(kaleidoscope_platform_dir 
    "${KALEIDOSCOPE_HARDWARE_BASE_PATH}/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}")
@@ -477,8 +311,8 @@ endif()
 
 # Allow to assign an alternative filename for the output file
 #
-if(COMMAND kaleidoscope_set_binary_basename)
-   kaleidoscope_set_binary_basename(binary_basename_default)
+if(COMMAND kaleidoscope_set_binary_basename_hook)
+   kaleidoscope_set_binary_basename_hook(binary_basename_default)
 endif()
 set(KALEIDOSCOPE_BINARY_BASENAME "${binary_basename_default}" CACHE STRING 
    "An alternative name for the generated firmware binary. The default name is used if empty.")
