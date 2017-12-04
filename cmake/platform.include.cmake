@@ -145,7 +145,7 @@ set(KALEIDOSCOPE_LIBRARIES_DIR "${kaleidoscope_platform_dir}/libraries" CACHE PA
 # directory structure available through kaleidoscope_vendor_dir.
 #
 message("Registering new hardware in \"${KALEIDOSCOPE_HARDWARE_BASE_PATH}/\
-${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}")
+${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}\"")
 
 register_hardware_platform_bva(
    "${KALEIDOSCOPE_HARDWARE_BASE_PATH}"
