@@ -32,14 +32,14 @@
 set(KALEIDOSCOPE_CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}"
    CACHE PATH "The path to the Kaleidoscope-CMake sources. This is only \"
 required to be set when Kaleidoscope-CMake is wrapped \
-by other CMake build systems")
+by other CMake build systems.")
 
 # The toolchain file is used when the project is initialized using
 # the project(...) directive further down.
 #
 set(KALEIDOSCOPE_HOST_BUILD FALSE CACHE BOOL "Enable this flag in the \
 rare case that you want to build for the host system instead of the \
-Arduino architecture (virtual builds)")
+Arduino architecture (virtual builds).")
 
 if(NOT KALEIDOSCOPE_HOST_BUILD)
    set(CMAKE_TOOLCHAIN_FILE 
@@ -81,7 +81,7 @@ else()
 endif()
    
 set(KALEIDOSCOPE_DOWNLOAD_ARDUINO FALSE CACHE BOOL "If this flag is \
-enabled, the build system downloads Arduino")
+enabled, the build system downloads Arduino.")
 
 # Travis testing settings
 #
@@ -222,13 +222,13 @@ endif()
 # user configurable through a CMake cache variable.
 #
 set(KALEIDOSCOPE_HARDWARE_BASE_PATH "${default_hardware_base_path}" 
-   CACHE PATH "The path to the Kaleidoscope hardware base directory")
+   CACHE PATH "The path to the Kaleidoscope hardware base directory.")
    
 set(KALEIDOSCOPE_VENDOR_ID "${default_vendor_id}" 
-   CACHE STRING "The vendor id of the board to build a firmware for")
+   CACHE STRING "The vendor id of the board to build a firmware for.")
 
 set(KALEIDOSCOPE_ARCHITECTURE_ID "${default_architecture_id}"
-   CACHE STRING "The architecture id of the board to build a firmware for")
+   CACHE STRING "The architecture id of the board to build a firmware for.")
 
 if(NOT EXISTS "${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
    message(FATAL_ERROR "Unable to find \
@@ -248,7 +248,7 @@ if(NOT EXISTS "${kaleidoscope_platform_dir}")
 endif()
 
 set(KALEIDOSCOPE_LIBRARIES_DIR "${kaleidoscope_platform_dir}/libraries" CACHE PATH 
-   "A path to the libraries directory where the Kaleidoscope libraries live")
+   "A path to the libraries directory where the Kaleidoscope libraries live.")
 
 # This registers our keyboard hardware with the Arduino-CMake 
 # system. Necessary information is read from files in the Arduino conforming 
@@ -285,7 +285,7 @@ endif()
 #
 set(KALEIDOSCOPE_BOARD "${default_board}" CACHE STRING
    "The type of board hardware. \
-   Currently supported: ${${vendor_id_upper}_BOARDS}")
+   Currently supported: ${${vendor_id_upper}_BOARDS} .")
    
 # Based on the keyboard name, we set some alternative name string variables
 # that are used in the configurations below
@@ -351,7 +351,7 @@ endif()
 set(programmers "avrisp;avrispmkii;usbtinyisp;parallel;arduinoisp")
 set(KALEIDOSCOPE_ARDUINO_PROGRAMMER 
    "avrispmkii" CACHE STRING
-   "The firmware programmer to use for flashing (available: ${programmers})"
+   "The firmware programmer to use for flashing (available: ${programmers})."
 )
 
 set(programmer_ok FALSE)
@@ -428,7 +428,7 @@ endforeach()
 set(KALEIDOSCOPE_ADDITIONAL_SOURCES "" CACHE STRING
    "A list of absolute paths of source files that are included in the \
 firmware build. This is only required for advanced use, e.g. when \
-Kaleidoscope-CMake is embedded in another CMake build system")
+Kaleidoscope-CMake is embedded in another CMake build system.")
 
 if(NOT "${KALEIDOSCOPE_ADDITIONAL_SOURCES}" STREQUAL "")
    list(APPEND all_add_src ${KALEIDOSCOPE_ADDITIONAL_SOURCES})
@@ -437,7 +437,7 @@ endif()
 set(KALEIDOSCOPE_ADDITIONAL_HEADERS "" CACHE STRING
    "A list of absolute paths of header files that are included in the \
 firmware build. This is only required for advanced use, e.g. when \
-Kaleidoscope-CMake is embedded in another CMake build system")
+Kaleidoscope-CMake is embedded in another CMake build system.")
 
 if(NOT "${KALEIDOSCOPE_ADDITIONAL_HEADERS}" STREQUAL "")
    set(add_headers HDRS ${KALEIDOSCOPE_ADDITIONAL_HEADERS})
