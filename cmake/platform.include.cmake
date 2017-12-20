@@ -140,6 +140,8 @@ endif()
 set(KALEIDOSCOPE_LIBRARIES_DIR "${kaleidoscope_platform_dir}/libraries" CACHE PATH 
    "A path to the libraries directory where the Kaleidoscope libraries live.")
    
+# include_directories("${KALEIDOSCOPE_LIBRARIES_DIR}")
+   
 # This registers our keyboard hardware with the Arduino-CMake 
 # system. Necessary information is read from files in the Arduino conforming 
 # directory structure available through kaleidoscope_vendor_dir.
