@@ -87,7 +87,7 @@ endif()
 # would be build and linked and thus lead to ambiguously defined 
 # symbols.
 #
-set(ARDUINO_CMAKE_BLACKLISTED_ARDUINO_LIBS 
+set(ARDUINO_LIBRARY_BLACKLIST 
    "\
 ${ARDUINO_SDK_PATH}/libraries/Keyboard/src;\
 ${ARDUINO_SDK_PATH}/libraries/Mouse/src;\

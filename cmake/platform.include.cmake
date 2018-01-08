@@ -149,11 +149,29 @@ set(KALEIDOSCOPE_LIBRARIES_DIR "${kaleidoscope_platform_dir}/libraries" CACHE PA
 message("Registering new hardware in \"${KALEIDOSCOPE_HARDWARE_BASE_PATH}/\
 ${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}\"")
 
-register_hardware_platform_bva(
-   "${KALEIDOSCOPE_HARDWARE_BASE_PATH}"
-   "${KALEIDOSCOPE_VENDOR_ID}"
-   "${KALEIDOSCOPE_ARCHITECTURE_ID}"
-)
+# function(_register_hardware_platform_bva
+#    base_path_
+#    vendor_id_
+#    architecture_
+# )
+#    set(BASE_PATH "${base_path_}")
+#    set(VENDOR_ID "${vendor_id_}")
+#    set(PLATFORM_ARCHITECTURE "${architecture_}")
+#    
+#    include("${CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Initialization/RegisterSpecificHardwarePlatform.cmake")
+# endfunction()
+
+# _register_hardware_platform_bva(
+#    "${KALEIDOSCOPE_HARDWARE_BASE_PATH}"
+#    "${KALEIDOSCOPE_VENDOR_ID}"
+#    "${KALEIDOSCOPE_ARCHITECTURE_ID}"
+# )
+
+set(BASE_PATH "${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
+set(VENDOR_ID "${KALEIDOSCOPE_VENDOR_ID}")
+set(PLATFORM_ARCHITECTURE "${KALEIDOSCOPE_ARCHITECTURE_ID}")
+
+include("${CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Initialization/RegisterSpecificHardwarePlatform.cmake")
 
 string(TOUPPER "${KALEIDOSCOPE_VENDOR_ID}" vendor_id_upper)
 
