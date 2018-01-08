@@ -171,7 +171,7 @@ set(BASE_PATH "${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
 set(VENDOR_ID "${KALEIDOSCOPE_VENDOR_ID}")
 set(PLATFORM_ARCHITECTURE "${KALEIDOSCOPE_ARCHITECTURE_ID}")
 
-include("${CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Initialization/RegisterSpecificHardwarePlatform.cmake")
+include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Initialization/RegisterSpecificHardwarePlatform.cmake")
 
 string(TOUPPER "${KALEIDOSCOPE_VENDOR_ID}" vendor_id_upper)
 
