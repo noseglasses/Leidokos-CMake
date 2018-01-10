@@ -47,6 +47,10 @@ thereby causing a lot of undesired waiting time in modify-compile-test-modify cy
 
 All this motivates the search for a more developer-friendly approach.
 
+# Capeleido
+Kaleidoscope-CMake is an essential part of the Capeleido build, develop and testing infrastructure for the Kaleidoscope firmware.
+<img src="https://github.com/noseglasses/Capeleido/blob/master/Capeleido.svg?sanitize=true">
+
 # CMake a portable solution
 CMake is a well established, mature, widely used and well supported configuration system. It is
 used by a large number of open source projects and has in the last 15 years more and more 
