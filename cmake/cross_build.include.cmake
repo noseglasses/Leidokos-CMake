@@ -39,21 +39,25 @@ if(NOT KALEIDOSCOPE_HOST_BUILD)
    -fno-exceptions \
    -ffunction-sections \
    -fdata-sections\
-   ")
+   "
+   )
 else()
 
    # Define empty flags. Else Arduino-CMake will define something Arduino
    # specific, which we have to avoid for host builds.
    #
-   set(ARDUINO_C_FLAGS "")
+   set(ARDUINO_C_FLAGS "" CACHE INTERNAL "")
    set(ARDUINO_CXX_FLAGS "\
    -std=gnu++11 \
    -Wall \
    -Wextra \
    -DARDUINO_VIRTUAL\
-   ")
+   " CACHE INTERNAL "")
    
    set(ARDUINO_LIBRARIES_PATH "___dummy__")
+   set(ARDUINO_SDK_PATH "___dummy__")
+   set(ARDUINO_CMAKE_SKIP_DETECT_VERSION TRUE CACHE INTERNAL "")
+   set(ARDUINO_CMAKE_SKIP_TEST_SETUP TRUE CACHE INTERNAL "")
    
    # Include Arduino.cmake directly to avoid Arduino toolchain setup as
    # it would be performed through defining CMAKE_TOOLCHAIN_FILE
