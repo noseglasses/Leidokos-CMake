@@ -10,7 +10,7 @@
 # Kaleidoscope-CMake
 Enables portable and parallel builds of Kaleidoscope using the CMake build system.
 
-# Disclaimer
+## Disclaimer
 This project is not meant as a replacement for or a competition to Kaleidoscope's stock build systems,
 but rather as an additional tool, directed to experienced programmers.
 
@@ -23,7 +23,7 @@ Instead, direct any issue reports and questions [here](https://github.com/nosegl
 
 Pull requests are, of course, highly welcome, as well as testers that work with other (exotic) plaforms apart from Linux.
 
-# Acknowledgements
+## Acknowledgements
 Great thanks to the developers of Arduino-CMake, namely the original developer [queezythegreat](https://github.com/queezythegreat)
 and the current maintainer [JonasProgrammer](https://github.com/JonasProgrammer). 
 Your very well designed tool provides a transparent replacement to arduino-builder.
@@ -31,7 +31,7 @@ Your very well designed tool provides a transparent replacement to arduino-build
 Also, many thanks to the developers and maintainers of Kaleidoscope for the firmware and 
 the inspiration that lead to the creation of this project.
 
-# Introduction
+## Introduction
 Kaleidoscope's stock build system is designed to be user friendly and welcoming. 
 It enables builds using the Arduino IDE or through a GNU make based approach.
 
@@ -47,11 +47,11 @@ thereby causing a lot of undesired waiting time in modify-compile-test-modify cy
 
 All this motivates the search for a more developer-friendly approach.
 
-# Capeleido
+## Capeleido
 Kaleidoscope-CMake is an essential part of the Capeleido build, develop and testing infrastructure for the Kaleidoscope firmware.
 <img src="https://github.com/noseglasses/Capeleido/blob/master/Capeleido.svg?sanitize=true">
 
-# CMake a portable solution
+## CMake a portable solution
 CMake is a well established, mature, widely used and well supported configuration system. It is
 used by a large number of open source projects and has in the last 15 years more and more 
 replaced autotools. Due to its availability on multiple platforms, it
@@ -103,21 +103,21 @@ file (`CMakeLists.txt`) resides. In the example above, we assumed the command to
 from a directory that is one level below the Kaleidoscope-CMake root directory, therefore the `..` 
 at the end of the command.
 
-# Prerequisites
-## CMake
+## Prerequisites
+### CMake
 To build with Kaleidoscope-CMake, the CMake build system must be installed. 
 On Ubuntu Linux, e.g. install it as
 ```bash
 sudo apt-get install cmake cmake-curses-gui
 ```
 
-## Arduino-CMake
+### Arduino-CMake
 Kaleidoscope-CMake currently depends on a [patched version](https://github.com/noseglasses/arduino-cmake) of 
 [Arduino-CMake](https://github.com/arduino-cmake/arduino-cmake) that is provided as a git submodule in the
 `3rd_party/arduino-cmake` directory of this project.
 As soon as some pull requests ([1](https://github.com/arduino-cmake/arduino-cmake/pull/17), [2](https://github.com/arduino-cmake/arduino-cmake/pull/19)) have been merged to upstream [Arduino-CMake](https://github.com/arduino-cmake/arduino-cmake), we will return to using the original Arduino-CMake.
 
-# For the impatient: A brief example
+## For the impatient: A brief example
 The following example shows how Kaleidoscope-CMake can be used to build the stock firmware on a
 Linux system using GNU make as build system.
 
@@ -151,7 +151,7 @@ cmake ${TARGET_DIR}/hardware/keyboardio/avr/libraries/Kaleidoscope-CMake
 make
 ```
 
-# Usage
+## Usage
 To build with CMake and GNU make on a Linux platform, do the following.
 
 1. Clone the Kaleidoscope-CMake repository to your `.../hardware/keyboardio/avr/libraries` folder.
@@ -179,7 +179,7 @@ make
 
 Instructions for other systems (Windows, OSX) can slightly vary. Please consult your platform specific documentation of CMake.
 
-# Upload
+## Upload
 To upload the firmware, enter the following (assuming you selected the `Unix Makefiles` generator).
 ```bash
 make upload
@@ -189,7 +189,7 @@ In general (for any arbitrary generator), enter the somewhat more detailed comma
 cmake --build . --target upload
 ```
 
-# Parallel builds
+## Parallel builds
 For most of its generators (for an explanation about what a generator is, see below) CMake supports parallel builds, 
 that allow to use all cores of a multi-core machine to shorten build times.
 
@@ -201,7 +201,7 @@ make -j 8
 
 instead of the standard build command `make`.
 
-# Builds with other build systems
+## Builds with other build systems
 If you want to use another build system, please consult the list of supported CMake Generators.
 A CMake Generator is a set of definitions that enables CMake to emit specific files can be used by
 different build systems, e.g. `Makefile`'s for GNU make.
@@ -231,7 +231,7 @@ cmake --build . [--target <target>]
 ```
 after the build system has been configured.
 
-# Auxiliary build targets
+## Auxiliary build targets
 Similar to GNU make, CMake allows for the definition of build targets, that can be individually
 executed. If no target is explicitly specified, the build system executes the default target, 
 which tries to build the firmware.
@@ -251,8 +251,8 @@ ninja help
 ```
 depending of the CMake Generator that has been selected.
 
-# Useful targets for developers
-## Compile, pre-processing and assembly generation for individual sources
+## Useful targets for developers
+### Compile, pre-processing and assembly generation for individual sources
 The list of sources that are part of a Kaleidoscope build is also displayed, when
 the `help` target is executed. For each source that is compiled there are three targets listed, ending in a
 file with extension `.obj`, `.i` and `.s`. 
@@ -271,14 +271,14 @@ cmake --build . --target .../my_source.i
 The output of the pre-processing process the follows informs about the
 actual target path of the generated file.
 
-## Disassembly
+### Disassembly
 For those familiary with assembly code, the `decompile` or `disassembly` target allows
 to generate a disassembly of the firmware code.
 
-## Symbol list
+### Symbol list
 A symbol list can be output by using the `nm` target.
 
-## Verbose builds
+### Verbose builds
 The `Unix Makefiles` generator supports the generation of verbose makefiles. Those
 allow for extra verbose debugging output that can easily be toggled 
 via the environment variable `VERBOSE`, e.g.
@@ -286,7 +286,7 @@ via the environment variable `VERBOSE`, e.g.
 VERBOSE=1 make
 ```
 
-# Advanced configuration
+## Advanced configuration
 Although, Kaleidoscope-CMake is meant to be as auto-detecting and smart as possible,
 it may be necessary to configure the system.
 
@@ -321,13 +321,13 @@ is started as
 ccmake ..
 ```
 
-# Supported platforms
+## Supported platforms
 Kaleidoscope-CMake is tested on Ubuntu Linux (16.04) with Arduino 1.8.5. As CMake and 
 arduino-cmake are both platform independent, this build system is supposed to
 work on other platforms, too.
 
 Testers working with other platforms are highly welcome! 
 
-# Travis-testing
+## Travis-testing
 Currently we test if the build system actually builds the stock firmware and if the symbols in the firmware that
 is build do match those of the stock firmware if build with the legacy GNU make build system.
