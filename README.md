@@ -49,6 +49,7 @@ All this motivates the search for a more developer-friendly approach.
 
 ## Capeleido
 Kaleidoscope-CMake is an essential part of the Capeleido build, develop and testing infrastructure for the Kaleidoscope firmware.
+
 <img src="https://github.com/noseglasses/Capeleido/blob/master/Capeleido.svg?sanitize=true">
 
 ## CMake a portable solution
