@@ -206,6 +206,7 @@ if(NOT EXISTS "${hardware_definition_file}")
    message(FATAL_ERROR "Unnable to find hardware definition file \"${hardware_definition_file}\" for \
 KALEIDOSCOPE_BOARD=${KALEIDOSCOPE_BOARD}")
 else()
+   message("Including hardware definition ${hardware_definition_file}")
    include("${hardware_definition_file}")
 endif()
 
