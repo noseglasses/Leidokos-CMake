@@ -1,5 +1,5 @@
 #  -*- mode: cmake -*-
-# Kaleidoscope-CMake -- An alternative build system that
+# Leidokos-CMake -- An alternative build system that
 #    enables building Kaleidoscope with CMake
 # Copyright (C) 2017 noseglasses <shinynoseglasses@gmail.com>
 # 
@@ -25,7 +25,7 @@ function(find_hardware_base_path__
    vendor_id_var_
    architecture_id_var_
 )
-   # First we try, if the "Kaleidoscope-CMake" directory is below the directory
+   # First we try, if the "Leidokos-CMake" directory is below the directory
    # we search for. As we do a string search in the path, we have to make sure 
    # that any symbolic links and ".." are removed first.
    #
@@ -37,7 +37,7 @@ function(find_hardware_base_path__
    #
    if(find_pos GREATER -1)
 
-      # The "Kaleidoscope-CMake" directory is obviously a subdirectory
+      # The "Leidokos-CMake" directory is obviously a subdirectory
       # of the directory we are looking for.
       
       math(EXPR find_pos "${find_pos} + 9")

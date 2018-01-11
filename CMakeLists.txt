@@ -1,5 +1,5 @@
 #  -*- mode: cmake -*-
-# Kaleidoscope-CMake -- An alternative build system that
+# Leidokos-CMake -- An alternative build system that
 #    enables building Kaleidoscope with CMake
 # Copyright (C) 2017 noseglasses <shinynoseglasses@gmail.com>
 # 
@@ -19,14 +19,14 @@
 # This is an alternative build system for the Kaleidoscope keyboard
 # firmware.
 
-# To enable Kaleidoscope-CMake to be included in other 
+# To enable Leidokos-CMake to be included in other 
 # CMake projects' CMakeLists.txt files, we use KALEIDOSCOPE_CMAKE_SOURCE_DIR
 # instead of CMAKE_SOURCE_DIR. KALEIDOSCOPE_CMAKE_SOURCE_DIR
 # can be set by the including CMake code.
 #
 set(KALEIDOSCOPE_CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}"
-   CACHE PATH "The path to the Kaleidoscope-CMake sources. This is only \"
-required to be set when Kaleidoscope-CMake is wrapped \
+   CACHE PATH "The path to the Leidokos-CMake sources. This is only \"
+required to be set when Leidokos-CMake is wrapped \
 by other CMake build systems.")
 
 macro(_include_cmake file_basename_)
@@ -47,7 +47,7 @@ _include_cmake(cmake_system)
 _include_cmake(cross_build)
 
 ################################################################################
-# Configure travis testing with Kaleidoscope-CMake.
+# Configure travis testing with Leidokos-CMake.
 ################################################################################
 
 _include_cmake(travis)

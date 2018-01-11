@@ -1,5 +1,5 @@
 #  -*- mode: cmake -*-
-# Kaleidoscope-CMake -- An alternative build system that
+# Leidokos-CMake -- An alternative build system that
 #    enables building Kaleidoscope with CMake
 # Copyright (C) 2017 noseglasses <shinynoseglasses@gmail.com>
 # 
@@ -65,7 +65,7 @@ endforeach()
 set(KALEIDOSCOPE_ADDITIONAL_SOURCES "" CACHE STRING
    "A list of absolute paths of source files that are included in the \
 firmware build. This is only required for advanced use, e.g. when \
-Kaleidoscope-CMake is embedded in another CMake build system.")
+Leidokos-CMake is embedded in another CMake build system.")
 
 if(NOT "${KALEIDOSCOPE_ADDITIONAL_SOURCES}" STREQUAL "")
    list(APPEND all_add_src ${KALEIDOSCOPE_ADDITIONAL_SOURCES})
@@ -74,7 +74,7 @@ endif()
 set(KALEIDOSCOPE_ADDITIONAL_HEADERS "" CACHE STRING
    "A list of absolute paths of header files that are included in the \
 firmware build. This is only required for advanced use, e.g. when \
-Kaleidoscope-CMake is embedded in another CMake build system.")
+Leidokos-CMake is embedded in another CMake build system.")
 
 if(NOT "${KALEIDOSCOPE_ADDITIONAL_HEADERS}" STREQUAL "")
    set(add_headers HDRS ${KALEIDOSCOPE_ADDITIONAL_HEADERS})

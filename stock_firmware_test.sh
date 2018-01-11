@@ -10,13 +10,13 @@ git clone --recursive https://github.com/keyboardio/Arduino-Boards.git \
     
 cd hardware/keyboardio/avr/libraries
 
-git clone --recursive https://github.com/noseglasses/Kaleidoscope-CMake.git
+git clone --recursive https://github.com/noseglasses/Leidokos-CMake.git
 
 cd ${TARGET_DIR}
 
 mkdir build
 cd build
 
-cmake ${TARGET_DIR}/hardware/keyboardio/avr/libraries/Kaleidoscope-CMake
+cmake ${TARGET_DIR}/hardware/keyboardio/avr/libraries/Leidokos-CMake
 
 make
