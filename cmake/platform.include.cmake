@@ -29,7 +29,7 @@ function(find_hardware_base_path__
    # we search for. As we do a string search in the path, we have to make sure 
    # that any symbolic links and ".." are removed first.
    #
-   get_filename_component(cmake_source_dir_realpath "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}" REALPATH)
+   get_filename_component(cmake_source_dir_realpath "${LEIDOKOS_CMAKE_SOURCE_DIR}" REALPATH)
    string(FIND "${cmake_source_dir_realpath}" 
       "/hardware/" find_pos REVERSE)
       
@@ -91,7 +91,7 @@ endmacro()
 # a hardware directory.
 #
 get_filename_component(below_libs_directory "${CMAKE_SOURCE_DIR}" PATH)
-find_hardware_base_path("${CMAKE_BINARY_DIR};${below_libs_directory}")#;${KALEIDOSCOPE_CMAKE_SOURCE_DIR}")
+find_hardware_base_path("${CMAKE_BINARY_DIR};${below_libs_directory}")#;${LEIDOKOS_CMAKE_SOURCE_DIR}")
 
 if(NOT default_hardware_base_path)
 
@@ -171,7 +171,7 @@ set(BASE_PATH "${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
 set(VENDOR_ID "${KALEIDOSCOPE_VENDOR_ID}")
 set(PLATFORM_ARCHITECTURE "${KALEIDOSCOPE_ARCHITECTURE_ID}")
 
-include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Initialization/RegisterSpecificHardwarePlatform.cmake")
+include("${LEIDOKOS_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Initialization/RegisterSpecificHardwarePlatform.cmake")
 
 string(TOUPPER "${KALEIDOSCOPE_VENDOR_ID}" vendor_id_upper)
 
@@ -200,7 +200,7 @@ set(KALEIDOSCOPE_BOARD "${default_board}" CACHE STRING
 # Based on the keyboard name, we set some alternative name string variables
 # that are used in the configurations below
 #
-set(hardware_definition_file "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/hardware/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}/${KALEIDOSCOPE_BOARD}.cmake")
+set(hardware_definition_file "${LEIDOKOS_CMAKE_SOURCE_DIR}/hardware/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID}/${KALEIDOSCOPE_BOARD}.cmake")
 
 if(NOT EXISTS "${hardware_definition_file}")
    message(FATAL_ERROR "Unnable to find hardware definition file \"${hardware_definition_file}\" for \

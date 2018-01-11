@@ -307,7 +307,7 @@ hardware definitions are situated |
 | KALEIDOSCOPE_VENDOR_ID          | The vendor ID of the target keyboard |
 | KALEIDOSCOPE_ARCHITECTURE_ID    | The target keyboard's architecture (e.g. avr) |
 | KALEIDOSCOPE_LIBRARIES_DIR      | The path to the libraries directory where the Kaleidoscope modules live (must only be explicitly set when this path is not below KALEIDOSCOPE_HARDWARE_BASE_PATH) |
-| KALEIDOSCOPE_CMAKE_SOURCE_DIR   | The path to the Leidokos-CMake sources. This is only required to be set when Leidokos-CMake is wrapped by other CMake build systems |
+| LEIDOKOS_CMAKE_SOURCE_DIR   | The path to the Leidokos-CMake sources. This is only required to be set when Leidokos-CMake is wrapped by other CMake build systems |
 | KALEIDOSCOPE_ADDITIONAL_HEADERS | A list of absolute paths of header files that are included in the firmware build. This is only required for advanced use, e.g. when Leidokos-CMake is embedded in another CMake build system |
 | KALEIDOSCOPE_BINARY_BASENAME    | An alternative name for the generated firmware binary. The default name is used if empty |
 

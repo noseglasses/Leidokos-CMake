@@ -20,17 +20,17 @@
 # firmware.
 
 # To enable Leidokos-CMake to be included in other 
-# CMake projects' CMakeLists.txt files, we use KALEIDOSCOPE_CMAKE_SOURCE_DIR
-# instead of CMAKE_SOURCE_DIR. KALEIDOSCOPE_CMAKE_SOURCE_DIR
+# CMake projects' CMakeLists.txt files, we use LEIDOKOS_CMAKE_SOURCE_DIR
+# instead of CMAKE_SOURCE_DIR. LEIDOKOS_CMAKE_SOURCE_DIR
 # can be set by the including CMake code.
 #
-set(KALEIDOSCOPE_CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}"
+set(LEIDOKOS_CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}"
    CACHE PATH "The path to the Leidokos-CMake sources. This is only \"
 required to be set when Leidokos-CMake is wrapped \
 by other CMake build systems.")
 
 macro(_include_cmake file_basename_)
-   include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/cmake/${file_basename_}.include.cmake")
+   include("${LEIDOKOS_CMAKE_SOURCE_DIR}/cmake/${file_basename_}.include.cmake")
 endmacro()
 
 ################################################################################
