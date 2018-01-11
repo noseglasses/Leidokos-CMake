@@ -1,5 +1,5 @@
 #  -*- mode: cmake -*-
-# Kaleidoscope-CMake -- An alternative build system that
+# Leidokos-CMake -- An alternative build system that
 #    enables building Kaleidoscope with CMake
 # Copyright (C) 2017 noseglasses <shinynoseglasses@gmail.com>
 # 

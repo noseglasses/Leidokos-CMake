@@ -1,13 +1,13 @@
 ![status][st:experimental] [![Build Status][travis:image]][travis:status]
 
-[travis:image]: https://travis-ci.org/noseglasses/Kaleidoscope-CMake.svg?branch=master
-[travis:status]: https://travis-ci.org/noseglasses/Kaleidoscope-CMake
+[travis:image]: https://travis-ci.org/noseglasses/Leidokos-CMake.svg?branch=master
+[travis:status]: https://travis-ci.org/noseglasses/Leidokos-CMake
 
 [st:stable]: https://img.shields.io/badge/stable-✔-black.svg?style=flat&colorA=44cc11&colorB=494e52
 [st:broken]: https://img.shields.io/badge/broken-X-black.svg?style=flat&colorA=e05d44&colorB=494e52
 [st:experimental]: https://img.shields.io/badge/experimental----black.svg?style=flat&colorA=dfb317&colorB=494e52
 
-# Kaleidoscope-CMake
+# Leidokos-CMake
 Enables portable and parallel builds of Kaleidoscope using the CMake build system.
 
 ## Disclaimer
@@ -17,9 +17,9 @@ but rather as an additional tool, directed to experienced programmers.
 The maintainers of Kaleidoscope pointed out that they are currently not planning to support 
 other build systems apart from the Arduino IDE and their own GNU make based
 build system. Please respect their decision and do not bother them with
-questions about Kaleidoscope-CMake. 
+questions about Leidokos-CMake. 
 
-Instead, direct any issue reports and questions [here](https://github.com/noseglasses/Kaleidoscope-CMake).
+Instead, direct any issue reports and questions [here](https://github.com/noseglasses/Leidokos-CMake).
 
 Pull requests are, of course, highly welcome, as well as testers that work with other (exotic) plaforms apart from Linux.
 
@@ -47,10 +47,10 @@ thereby causing a lot of undesired waiting time in modify-compile-test-modify cy
 
 All this motivates the search for a more developer-friendly approach.
 
-## Capeleido
-Kaleidoscope-CMake is an essential part of the Capeleido build, develop and testing infrastructure for the Kaleidoscope firmware.
+## CapeLeidokos
+Leidokos-CMake is an essential part of the CapeLeidokos build, develop and testing infrastructure for the Kaleidoscope firmware.
 
-<img src="https://github.com/noseglasses/Capeleido/blob/master/Capeleido.svg?sanitize=true">
+<img src="https://github.com/noseglasses/CapeLeidokos/blob/master/CapeLeidokos.svg?sanitize=true">
 
 ## CMake a portable solution
 CMake is a well established, mature, widely used and well supported configuration system. It is
@@ -101,25 +101,25 @@ ccmake ..
          
 **Note:** Almost every call to `cmake` or `ccmake` expects a directory that defines where the configuration
 file (`CMakeLists.txt`) resides. In the example above, we assumed the command to be entered
-from a directory that is one level below the Kaleidoscope-CMake root directory, therefore the `..` 
+from a directory that is one level below the Leidokos-CMake root directory, therefore the `..` 
 at the end of the command.
 
 ## Prerequisites
 ### CMake
-To build with Kaleidoscope-CMake, the CMake build system must be installed. 
+To build with Leidokos-CMake, the CMake build system must be installed. 
 On Ubuntu Linux, e.g. install it as
 ```bash
 sudo apt-get install cmake cmake-curses-gui
 ```
 
 ### Arduino-CMake
-Kaleidoscope-CMake currently depends on a [patched version](https://github.com/noseglasses/arduino-cmake) of 
+Leidokos-CMake currently depends on a [patched version](https://github.com/noseglasses/arduino-cmake) of 
 [Arduino-CMake](https://github.com/arduino-cmake/arduino-cmake) that is provided as a git submodule in the
 `3rd_party/arduino-cmake` directory of this project.
 As soon as some pull requests ([1](https://github.com/arduino-cmake/arduino-cmake/pull/17), [2](https://github.com/arduino-cmake/arduino-cmake/pull/19)) have been merged to upstream [Arduino-CMake](https://github.com/arduino-cmake/arduino-cmake), we will return to using the original Arduino-CMake.
 
 ## For the impatient: A brief example
-The following example shows how Kaleidoscope-CMake can be used to build the stock firmware on a
+The following example shows how Leidokos-CMake can be used to build the stock firmware on a
 Linux system using GNU make as build system.
 
 ```bash
@@ -132,10 +132,10 @@ mkdir -p hardware/keyboardio
 git clone --recursive https://github.com/keyboardio/Arduino-Boards.git \
     hardware/keyboardio/avr
 
-# Clone Kaleidoscope-CMake as a sibling to the stock plugins
+# Clone Leidokos-CMake as a sibling to the stock plugins
 #
 cd hardware/keyboardio/avr/libraries
-git clone --recursive https://github.com/noseglasses/Kaleidoscope-CMake.git
+git clone --recursive https://github.com/noseglasses/Leidokos-CMake.git
 
 # Generate and change to a build directory
 #
@@ -145,7 +145,7 @@ cd build
 
 # Configure the build system
 #
-cmake ${TARGET_DIR}/hardware/keyboardio/avr/libraries/Kaleidoscope-CMake
+cmake ${TARGET_DIR}/hardware/keyboardio/avr/libraries/Leidokos-CMake
 
 # Run the build
 #
@@ -155,15 +155,15 @@ make
 ## Usage
 To build with CMake and GNU make on a Linux platform, do the following.
 
-1. Clone the Kaleidoscope-CMake repository to your `.../hardware/keyboardio/avr/libraries` folder.
+1. Clone the Leidokos-CMake repository to your `.../hardware/keyboardio/avr/libraries` folder.
 ```bash
 cd <a_suitable_path>/hardware/keyboardio/avr/libraries
-git clone --recursive https://github.com/noseglasses/Kaleidoscope-CMake.git
+git clone --recursive https://github.com/noseglasses/Leidokos-CMake.git
 ```
 
 2. Generate an (out-of-source) build directory
 ```bash
-cd Kaleidoscope-CMake
+cd Leidokos-CMake
 mkdir build
 cd build
 ```
@@ -288,7 +288,7 @@ VERBOSE=1 make
 ```
 
 ## Advanced configuration
-Although, Kaleidoscope-CMake is meant to be as auto-detecting and smart as possible,
+Although, Leidokos-CMake is meant to be as auto-detecting and smart as possible,
 it may be necessary to configure the system.
 
 The following table provides an overview of configuration variables that are
@@ -307,8 +307,8 @@ hardware definitions are situated |
 | KALEIDOSCOPE_VENDOR_ID          | The vendor ID of the target keyboard |
 | KALEIDOSCOPE_ARCHITECTURE_ID    | The target keyboard's architecture (e.g. avr) |
 | KALEIDOSCOPE_LIBRARIES_DIR      | The path to the libraries directory where the Kaleidoscope modules live (must only be explicitly set when this path is not below KALEIDOSCOPE_HARDWARE_BASE_PATH) |
-| KALEIDOSCOPE_CMAKE_SOURCE_DIR   | The path to the Kaleidoscope-CMake sources. This is only required to be set when Kaleidoscope-CMake is wrapped by other CMake build systems |
-| KALEIDOSCOPE_ADDITIONAL_HEADERS | A list of absolute paths of header files that are included in the firmware build. This is only required for advanced use, e.g. when Kaleidoscope-CMake is embedded in another CMake build system |
+| LEIDOKOS_CMAKE_SOURCE_DIR   | The path to the Leidokos-CMake sources. This is only required to be set when Leidokos-CMake is wrapped by other CMake build systems |
+| KALEIDOSCOPE_ADDITIONAL_HEADERS | A list of absolute paths of header files that are included in the firmware build. This is only required for advanced use, e.g. when Leidokos-CMake is embedded in another CMake build system |
 | KALEIDOSCOPE_BINARY_BASENAME    | An alternative name for the generated firmware binary. The default name is used if empty |
 
 The value of a variable can either be set at the CMake command line during the configuration
@@ -323,7 +323,7 @@ ccmake ..
 ```
 
 ## Supported platforms
-Kaleidoscope-CMake is tested on Ubuntu Linux (16.04) with Arduino 1.8.5. As CMake and 
+Leidokos-CMake is tested on Ubuntu Linux (16.04) with Arduino 1.8.5. As CMake and 
 arduino-cmake are both platform independent, this build system is supposed to
 work on other platforms, too.
 

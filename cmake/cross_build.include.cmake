@@ -1,5 +1,5 @@
 #  -*- mode: cmake -*-
-# Kaleidoscope-CMake -- An alternative build system that
+# Leidokos-CMake -- An alternative build system that
 #    enables building Kaleidoscope with CMake
 # Copyright (C) 2017 noseglasses <shinynoseglasses@gmail.com>
 # 
@@ -25,7 +25,7 @@ Arduino architecture (virtual builds).")
 
 if(NOT KALEIDOSCOPE_HOST_BUILD)
    set(CMAKE_TOOLCHAIN_FILE 
-      "${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/ArduinoToolchain.cmake")
+      "${LEIDOKOS_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/ArduinoToolchain.cmake")
 
    # Add some additional compiler command line flags that are needed
    # to build Kaleidoscope.
@@ -63,5 +63,5 @@ else()
    # it would be performed through defining CMAKE_TOOLCHAIN_FILE
    # as done in the platform build setup above.
    #
-   include("${KALEIDOSCOPE_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Arduino.cmake")
+   include("${LEIDOKOS_CMAKE_SOURCE_DIR}/3rd_party/arduino-cmake/cmake/Platform/Arduino.cmake")
 endif()
