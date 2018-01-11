@@ -30,10 +30,14 @@ if(NOT KALEIDOSCOPE_HOST_BUILD)
    # Add some additional compiler command line flags that are needed
    # to build Kaleidoscope.
    #
-   set(ARDUINO_C_FLAGS "" CACHE INTERNAL "-std=gnu11")
+   set(ARDUINO_C_FLAGS "\
+   -std=gnu11 \
+   -mcall-prologues \
+   -ffunction-sections \
+   -fdata-sections
+   " CACHE INTERNAL "")
    
-   set(ARDUINO_CXX_FLAGS 
-      "\
+   set(ARDUINO_CXX_FLAGS "\
    -std=gnu++11 \
    -Wall \
    -Wextra \
@@ -48,7 +52,11 @@ else()
    # Define empty flags. Else Arduino-CMake will define something Arduino
    # specific, which we have to avoid for host builds.
    #
-   set(ARDUINO_C_FLAGS "" CACHE INTERNAL "-std=gnu11")
+   set(ARDUINO_C_FLAGS "\
+   -std=gnu11 \
+   -DARDUINO_VIRTUAL\
+   " CACHE INTERNAL "")
+   
    set(ARDUINO_CXX_FLAGS "\
    -std=gnu++11 \
    -Wall \
