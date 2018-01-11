@@ -34,7 +34,7 @@ if(NOT KALEIDOSCOPE_HOST_BUILD)
    -std=gnu11 \
    -mcall-prologues \
    -ffunction-sections \
-   -fdata-sections
+   -fdata-sections \
    " CACHE INTERNAL "")
    
    set(ARDUINO_CXX_FLAGS "\
