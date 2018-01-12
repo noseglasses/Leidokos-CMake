@@ -10,7 +10,7 @@ git clone --recursive https://github.com/keyboardio/Arduino-Boards.git \
     
 cd hardware/keyboardio/avr/libraries
 
-git clone --recursive https://github.com/noseglasses/Leidokos-CMake.git
+git clone --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
 
 cd ${TARGET_DIR}
 

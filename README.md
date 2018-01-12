@@ -1,7 +1,7 @@
 ![status][st:experimental] [![Build Status][travis:image]][travis:status]
 
-[travis:image]: https://travis-ci.org/noseglasses/Leidokos-CMake.svg?branch=master
-[travis:status]: https://travis-ci.org/noseglasses/Leidokos-CMake
+[travis:image]: https://travis-ci.org/CapeLeidokos/Leidokos-CMake.svg?branch=master
+[travis:status]: https://travis-ci.org/CapeLeidokos/Leidokos-CMake
 
 [st:stable]: https://img.shields.io/badge/stable-✔-black.svg?style=flat&colorA=44cc11&colorB=494e52
 [st:broken]: https://img.shields.io/badge/broken-X-black.svg?style=flat&colorA=e05d44&colorB=494e52
@@ -19,7 +19,7 @@ other build systems apart from the Arduino IDE and their own GNU make based
 build system. Please respect their decision and do not bother them with
 questions about Leidokos-CMake. 
 
-Instead, direct any issue reports and questions [here](https://github.com/noseglasses/Leidokos-CMake).
+Instead, direct any issue reports and questions [here](https://github.com/CapeLeidokos/Leidokos-CMake).
 
 Pull requests are, of course, highly welcome, as well as testers that work with other (exotic) plaforms apart from Linux.
 
@@ -50,7 +50,7 @@ All this motivates the search for a more developer-friendly approach.
 ## CapeLeidokos
 Leidokos-CMake is an essential part of the CapeLeidokos build, develop and testing infrastructure for the Kaleidoscope firmware.
 
-<img src="https://github.com/noseglasses/CapeLeidokos/blob/master/CapeLeidokos.svg?sanitize=true">
+<img src="https://github.com/CapeLeidokos/CapeLeidokos/blob/master/CapeLeidokos.svg?sanitize=true">
 
 ## CMake a portable solution
 CMake is a well established, mature, widely used and well supported configuration system. It is
@@ -113,7 +113,7 @@ sudo apt-get install cmake cmake-curses-gui
 ```
 
 ### Arduino-CMake
-Leidokos-CMake currently depends on a [patched version](https://github.com/noseglasses/arduino-cmake) of 
+Leidokos-CMake currently depends on a [patched version](https://github.com/CapeLeidokos/arduino-cmake) of 
 [Arduino-CMake](https://github.com/arduino-cmake/arduino-cmake) that is provided as a git submodule in the
 `3rd_party/arduino-cmake` directory of this project.
 As soon as some pull requests ([1](https://github.com/arduino-cmake/arduino-cmake/pull/17), [2](https://github.com/arduino-cmake/arduino-cmake/pull/19)) have been merged to upstream [Arduino-CMake](https://github.com/arduino-cmake/arduino-cmake), we will return to using the original Arduino-CMake.
@@ -135,7 +135,7 @@ git clone --recursive https://github.com/keyboardio/Arduino-Boards.git \
 # Clone Leidokos-CMake as a sibling to the stock plugins
 #
 cd hardware/keyboardio/avr/libraries
-git clone --recursive https://github.com/noseglasses/Leidokos-CMake.git
+git clone --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
 
 # Generate and change to a build directory
 #
@@ -158,7 +158,7 @@ To build with CMake and GNU make on a Linux platform, do the following.
 1. Clone the Leidokos-CMake repository to your `.../hardware/keyboardio/avr/libraries` folder.
 ```bash
 cd <a_suitable_path>/hardware/keyboardio/avr/libraries
-git clone --recursive https://github.com/noseglasses/Leidokos-CMake.git
+git clone --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
 ```
 
 2. Generate an (out-of-source) build directory
