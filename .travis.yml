@@ -2,9 +2,17 @@ dist: trusty
 sudo: false
 os:
   - linux
+  
+# Only test direct pushes to master
+#
+branches:
+  only: 
+    - master
+    
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y cmake
+  
 script:
   - cd $HOME
   - mkdir -p hardware/keyboardio
@@ -16,10 +24,12 @@ script:
   - cd kcm_build
   - cmake -DKALEIDOSCOPE_DOWNLOAD_ARDUINO=TRUE $HOME/hardware/keyboardio/avr/libraries/Leidokos-CMake
   - make nm_diff
+  
 notifications:
   email:
     recipients:
       - shinynoseglasses@gmail.com
     on_failure: always
+    
 cache:
 ccache: true
