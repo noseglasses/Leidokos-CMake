@@ -108,6 +108,10 @@ endif()
 set(KALEIDOSCOPE_HARDWARE_BASE_PATH "${default_hardware_base_path}" 
    CACHE PATH "The path to the Kaleidoscope hardware base directory.")
    
+if(COMMAND after_KALEIDOSCOPE_HARDWARE_BASE_PATH_defined)
+   after_KALEIDOSCOPE_HARDWARE_BASE_PATH_defined()
+endif()
+   
 set(KALEIDOSCOPE_VENDOR_ID "${default_vendor_id}" 
    CACHE STRING "The vendor id of the board to build a firmware for.")
 
