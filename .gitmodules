@@ -1,3 +1,3 @@
 [submodule "3rd_party/arduino-cmake"]
 	path = 3rd_party/arduino-cmake
-	url = https://github.com/CapeLeidokos/arduino-cmake.git
+	url = https://github.com/arduino-cmake/arduino-cmake.git
