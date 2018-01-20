@@ -64,9 +64,10 @@ message("4 WIN32=${WIN32}")
 _include_cmake(arduino)
 
 message("5 WIN32=${WIN32}")
+set(was_WIN32 ${WIN32})
 project(Kaleidoscope)
 cmake_minimum_required(VERSION 2.8)
-
+set(WIN32 ${was_WIN32})
 message("6 WIN32=${WIN32}")
 ################################################################################
 # Configure the target platform hardware.
