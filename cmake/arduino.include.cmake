@@ -23,6 +23,7 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
 
    if(NOT EXISTS "${travis_arduino_path}")
       message("Installing Arduino...")
+      message("   Downloading ${travis_arduino_download_url}")
       file(DOWNLOAD "${travis_arduino_download_url}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}")
       
       get_filename_component(archive_extension "${travis_arduino_file}" EXT)
