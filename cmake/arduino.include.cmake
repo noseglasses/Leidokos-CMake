@@ -39,7 +39,7 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
       )
    endif()
    
-   set(ARDUINO_SDK_PATH "${CMAKE_BINARY_DIR}/${travis_arduino}" CACHE PATH "")
+   set(ARDUINO_SDK_PATH "${travis_arduino_path}" CACHE PATH "")
 endif()
 
 # Make sure that the correct avr-gcc of the arduino installation
@@ -53,6 +53,12 @@ endif()
 #
 if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
    set(CMAKE_PREFIX_PATH "${travis_arduino_path}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
+   
+   if(WIN32)
+      set(CMAKE_C_COMPILER "${travis_arduino_path}/hardware/tools/avr/bin/avr-gcc.exe" CACHE INTERNAL "" FORCE)
+      set(CMAKE_ASM_COMPILER "${travis_arduino_path}/hardware/tools/avr/bin/avr-gcc.exe" CACHE INTERNAL "" FORCE)
+      set(CMAKE_CXX_COMPILER "${travis_arduino_path}/hardware/tools/avr/bin/avr-g++.exe" CACHE INTERNAL "" FORCE)
+   endif()
 elseif(NOT "$ENV{ARDUINO_PATH}" STREQUAL "")
    set(CMAKE_PREFIX_PATH "$ENV{ARDUINO_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
 elseif(NOT "$ENV{ARDUINO_SDK_PATH}" STREQUAL "")
