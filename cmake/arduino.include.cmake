@@ -33,7 +33,7 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
          set(extraction_args "xf")
       endif()
       execute_process(
-         COMMAND "${CMAKE_COMMAND}" -E tar "${archive_extension}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
+         COMMAND "${CMAKE_COMMAND}" -E tar "${extraction_args}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
       )
    endif()
