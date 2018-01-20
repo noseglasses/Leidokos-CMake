@@ -79,9 +79,13 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
    
    set(arduino_bin_path "${ARDUINO_SDK_PATH}/hardware/tools/avr/bin/")
    
-   file(TO_NATIVE_PATH "${arduino_bin_path}avr-gcc${exe_extension}" CMAKE_C_COMPILER)
-   file(TO_NATIVE_PATH "${arduino_bin_path}avr-gcc${exe_extension}" CMAKE_ASM_COMPILER)
-   file(TO_NATIVE_PATH "${arduino_bin_path}avr-g++${exe_extension}" CMAKE_CXX_COMPILER)
+   set(CMAKE_C_COMPILER "${arduino_bin_path}avr-gcc${exe_extension}")
+   set(CMAKE_ASM_COMPILER "${arduino_bin_path}avr-gcc${exe_extension}")
+   set(CMAKE_CXX_COMPILER "${arduino_bin_path}avr-g++${exe_extension}")
+   
+   if(NOT EXISTS "${CMAKE_C_COMPILER}")
+      message(FATAL_ERROR "Unable to find CMAKE_C_COMPILER=${CMAKE_C_COMPILER}")
+   endif()
 
 elseif(NOT "$ENV{ARDUINO_PATH}" STREQUAL "")
    set(CMAKE_PREFIX_PATH "$ENV{ARDUINO_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
