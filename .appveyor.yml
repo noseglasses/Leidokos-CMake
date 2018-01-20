@@ -23,7 +23,7 @@ build_script:
       rmdir "hardware\keyboardio\avr" /s /q
       git clone --recursive https://github.com/keyboardio/Arduino-Boards.git "hardware\keyboardio\avr"
       cd hardware\keyboardio\avr\libraries
-      git clone -b ${TRAVIS_BRANCH} --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
+      git clone -b %APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH% --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
       cd %BASE_DIR%
       cmake -E make_directory "lcm_build"
       cd lcm_build
