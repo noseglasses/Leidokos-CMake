@@ -13,6 +13,15 @@ install:
        cmake -E make_directory "ninja"
        cmake -E rename "ninja.exe" "ninja/ninja.exe"
        set PATH=%cd%\ninja;%PATH%
+       rem
+       rem Under windows, Arduinos's binary directory must be in the 
+       rem PATH variable for the compiler to work. Therefore, we cannot
+       rem rely on Leidokos-CMake to install Arduino as it is not possible
+       rem to change the PATH variable through the CMake configuration process.
+       rem
+       appveyor DownloadFile "http://downloads.arduino.cc/arduino-1.8.5-windows.zip"
+       cmake -E tar xf arduino-1.8.5-windows.zip
+       set PATH=%cd%\arduino-1.8.5\hardware\tools\avr\bin;%PATH%
        
 build: Script
 
@@ -26,17 +35,7 @@ build_script:
       cd %BASE_DIR%
       cmake -E make_directory "lcm_build"
       cd lcm_build
-      rem
-      rem Under windows, Arduinos's binary directory must be in the 
-      rem PATH variable for the compiler to work. Therefore, we cannot
-      rem rely on Leidokos-CMake to install Arduino as it is not possible
-      rem to change the PATH variable through the CMake configuration process.
-      rem
-      appveyor DownloadFile "http://downloads.arduino.cc/arduino-1.8.5-windows.zip"
-      cmake -E tar xf arduino-1.8.5-windows.zip
-      set PATH=%cd%\arduino-1.8.5\hardware\tools\avr\bin;%PATH%
-      
-      cmake -G Ninja "-DARDUINO_SDK_PATH=%cd%/arduino-1.8.5" %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
+      cmake -G Ninja "-DARDUINO_SDK_PATH=C:/projects/leidokos-cmake/arduino-1.8.5" %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
       ninja.exe nm_diff
   
 notifications:

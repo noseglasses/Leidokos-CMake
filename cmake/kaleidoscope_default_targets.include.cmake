@@ -110,10 +110,14 @@ add_dependencies(firmware_test "${kaleidoscope_firmware_target}" check-astyle cp
 #
 set(stock_build_script "${cmake_scripts_dir}/stock_build.script.cmake")
 
+# Prevent problems with backslashes on windows
+#
+file(TO_CMAKE_PATH "${ARDUINO_SDK_PATH}" cmake_arduino_sdk_path)
+
 file(WRITE "${stock_build_script}" "\
 set(ENV{BOARD_HARDWARE_PATH} \"${KALEIDOSCOPE_HARDWARE_BASE_PATH}\")
-set(ENV{ARDUINO_SDK_PATH} \"${ARDUINO_SDK_PATH}\")
-set(ENV{ARDUINO_PATH} \"${ARDUINO_SDK_PATH}\")
+set(ENV{ARDUINO_SDK_PATH} \"${cmake_arduino_sdk_path}\")
+set(ENV{ARDUINO_PATH} \"${cmake_arduino_sdk_path}\")
 
 execute_process(
    COMMAND ${CMAKE_COMMAND} --build .
