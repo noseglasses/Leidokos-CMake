@@ -20,7 +20,7 @@ build_script:
   - cmd: |
       set BASE_DIR=%cd%
       cmake -E make_directory "hardware/keyboardio"
-      git clone --recursive https://github.com/keyboardio/Arduino-Boards.git hardware\keyboardio\avr
+      git clone --recursive https://github.com/keyboardio/Arduino-Boards.git 'hardware\keyboardio\avr'
       cd hardware\keyboardio\avr\libraries
       git clone -b ${TRAVIS_BRANCH} --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
       cd %BASE_DIR%
