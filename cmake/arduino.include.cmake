@@ -58,27 +58,28 @@ endif()
 if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
 
    set(CMAKE_PREFIX_PATH "${ARDUINO_SDK_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
-   set(ENV{_ARDUINO_CMAKE_WORKAROUND_ARDUINO_SDK_PATH} "${ARDUINO_SDK_PATH}")
-   list(APPEND CMAKE_SYSTEM_PREFIX_PATH ${ARDUINO_SDK_PATH}/hardware/tools/avr)
    
-   # Suppress Arduino-CMake's detection in ArduinoToolchain.cmake
-   #
-   set(_IS_TOOLCHAIN_PROCESSED TRUE)
-   
-   set(exe_extension)
-   if(WIN32)
-      set(exe_extension ".exe")
-   endif()
-   
-   set(arduino_bin_path "${ARDUINO_SDK_PATH}/hardware/tools/avr/bin/")
-   
-   set(CMAKE_C_COMPILER "${arduino_bin_path}avr-gcc${exe_extension}")
-   set(CMAKE_ASM_COMPILER "${arduino_bin_path}avr-gcc${exe_extension}")
-   set(CMAKE_CXX_COMPILER "${arduino_bin_path}avr-g++${exe_extension}")
-   
-   if(NOT EXISTS "${CMAKE_C_COMPILER}")
-      message(FATAL_ERROR "Unable to find CMAKE_C_COMPILER=${CMAKE_C_COMPILER}")
-   endif()
+#    set(ENV{_ARDUINO_CMAKE_WORKAROUND_ARDUINO_SDK_PATH} "${ARDUINO_SDK_PATH}")
+#    list(APPEND CMAKE_SYSTEM_PREFIX_PATH ${ARDUINO_SDK_PATH}/hardware/tools/avr)
+#    
+#    # Suppress Arduino-CMake's detection in ArduinoToolchain.cmake
+#    #
+#    set(_IS_TOOLCHAIN_PROCESSED TRUE)
+#    
+#    set(exe_extension)
+#    if(WIN32)
+#       set(exe_extension ".exe")
+#    endif()
+#    
+#    set(arduino_bin_path "${ARDUINO_SDK_PATH}/hardware/tools/avr/bin/")
+#    
+#    set(CMAKE_C_COMPILER "${arduino_bin_path}avr-gcc${exe_extension}")
+#    set(CMAKE_ASM_COMPILER "${arduino_bin_path}avr-gcc${exe_extension}")
+#    set(CMAKE_CXX_COMPILER "${arduino_bin_path}avr-g++${exe_extension}")
+#    
+#    if(NOT EXISTS "${CMAKE_C_COMPILER}")
+#       message(FATAL_ERROR "Unable to find CMAKE_C_COMPILER=${CMAKE_C_COMPILER}")
+#    endif()
 
 elseif(NOT "$ENV{ARDUINO_PATH}" STREQUAL "")
    set(CMAKE_PREFIX_PATH "$ENV{ARDUINO_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
