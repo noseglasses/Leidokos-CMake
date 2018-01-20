@@ -55,7 +55,7 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
    set(CMAKE_PREFIX_PATH "${travis_arduino_path}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
    
    if(WIN32)
-      set($ENV{PATH} "${travis_arduino_path}/hardware/tools/avr/bin;$ENV{PATH}")
+      set(ENV{PATH} "${travis_arduino_path}/hardware/tools/avr/bin;$ENV{PATH}")
    endif()
 elseif(NOT "$ENV{ARDUINO_PATH}" STREQUAL "")
    set(CMAKE_PREFIX_PATH "$ENV{ARDUINO_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
