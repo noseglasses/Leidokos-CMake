@@ -19,6 +19,14 @@
 # Travis testing settings
 #
 set(travis_arduino "arduino-1.8.5")
-set(travis_arduino_file "${travis_arduino}-linux64.tar.xz")
+
+if(UNIX)
+   set(travis_arduino_file "${travis_arduino}-linux64.tar.xz")
+elseif(APPLE)
+   set(travis_arduino_file "${travis_arduino}-macosx.zip")
+else()
+   set(travis_arduino_file "${travis_arduino}-windows.zip")
+endif()
+
 set(travis_arduino_path "${CMAKE_BINARY_DIR}/${travis_arduino}")
 set(travis_arduino_download_url "http://downloads.arduino.cc/${travis_arduino_file}")

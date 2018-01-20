@@ -66,6 +66,7 @@ set(KALEIDOSCOPE_ADDITIONAL_SOURCES "" CACHE STRING
    "A list of absolute paths of source files that are included in the \
 firmware build. This is only required for advanced use, e.g. when \
 Leidokos-CMake is embedded in another CMake build system.")
+mark_as_advanced(KALEIDOSCOPE_ADDITIONAL_SOURCES)
 
 if(NOT "${KALEIDOSCOPE_ADDITIONAL_SOURCES}" STREQUAL "")
    list(APPEND all_add_src ${KALEIDOSCOPE_ADDITIONAL_SOURCES})
@@ -75,6 +76,7 @@ set(KALEIDOSCOPE_ADDITIONAL_HEADERS "" CACHE STRING
    "A list of absolute paths of header files that are included in the \
 firmware build. This is only required for advanced use, e.g. when \
 Leidokos-CMake is embedded in another CMake build system.")
+mark_as_advanced(KALEIDOSCOPE_ADDITIONAL_HEADERS)
 
 if(NOT "${KALEIDOSCOPE_ADDITIONAL_HEADERS}" STREQUAL "")
    set(add_headers HDRS ${KALEIDOSCOPE_ADDITIONAL_HEADERS})
@@ -119,6 +121,7 @@ if(COMMAND kaleidoscope_set_binary_basename_hook)
 endif()
 set(KALEIDOSCOPE_BINARY_BASENAME "${binary_basename_default}" CACHE STRING 
    "An alternative name for the generated firmware binary. The default name is used if empty.")
+mark_as_advanced(KALEIDOSCOPE_BINARY_BASENAME)
    
 if(NOT "${KALEIDOSCOPE_BINARY_BASENAME}" STREQUAL "")
    set_target_properties("${kaleidoscope_firmware_target}" 

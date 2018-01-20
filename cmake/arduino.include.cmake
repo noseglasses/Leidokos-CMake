@@ -24,8 +24,16 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
    if(NOT EXISTS "${travis_arduino_path}")
       message("Installing Arduino...")
       file(DOWNLOAD "${travis_arduino_download_url}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}")
+      
+      get_filename_component(archive_extension "${travis_arduino_file}" EXT)
+      
+      if("${archive_extension}" STREQUAL ".zip")
+         set(extraction_args "cfv")
+      elseif("${archive_extension}" STREQUAL ".tar.xz")
+         set(extraction_args "xf")
+      endif()
       execute_process(
-         COMMAND "${CMAKE_COMMAND}" -E tar xf "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
+         COMMAND "${CMAKE_COMMAND}" -E tar "${archive_extension}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
       )
    endif()
