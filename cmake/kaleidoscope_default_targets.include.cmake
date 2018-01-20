@@ -116,7 +116,7 @@ set(ENV{ARDUINO_SDK_PATH} \"${ARDUINO_SDK_PATH}\")
 set(ENV{ARDUINO_PATH} \"${ARDUINO_SDK_PATH}\")
 
 execute_process(
-   COMMAND make
+   COMMAND ${CMAKE_COMMAND} --build .
    WORKING_DIRECTORY \"${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware\"
 )
 ")
@@ -134,6 +134,14 @@ add_custom_target(
 )
 
 add_dependencies(firmware_binary_check stock_build "${kaleidoscope_firmware_target}")
+
+if(WIN32)
+   set(cut_cmd "C:\cygwin64\bin\cut.exe")
+   set(sort_cmd "C:\cygwin64\bin\sort.exe")
+else()
+   set(cut_cmd "cut")
+   set(sort_cmd "sort")
+endif()
 
 set(nm_diff_script "${cmake_scripts_dir}/nm_diff.script.cmake")
 file(WRITE "${nm_diff_script}" "\
