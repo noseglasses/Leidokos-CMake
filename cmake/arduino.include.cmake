@@ -35,8 +35,19 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
       endif()
       execute_process(
          COMMAND "${CMAKE_COMMAND}" -E tar "${extraction_args}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
+         RESULT_VARIABLE result
+         OUTPUT_VARIABLE output
+         ERROR_VARIABLE error
          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
       )
+      
+      if(NOT "${result}" EQUAL 0)
+         message("Extraction of Arduino archive ${CMAKE_BINARY_DIR}/${travis_arduino_file} failed")
+         message("   result: ${result}")
+         message("   output: ${output}")
+         message("   error: ${error}")
+         message(FATAL_ERROR "Bailing out.")
+      endif()
    endif()
    
    set(ARDUINO_SDK_PATH "${travis_arduino_path}" CACHE PATH "")
@@ -68,9 +79,9 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
    
    set(arduino_bin_path "${ARDUINO_SDK_PATH}/hardware/tools/avr/bin/")
    
-   set(CMAKE_C_COMPILER "${arduino_bin_path}avr-gcc${exe_extension}")
-   set(CMAKE_ASM_COMPILER "${arduino_bin_path}avr-gcc${exe_extension}")
-   set(CMAKE_CXX_COMPILER "${arduino_bin_path}avr-g++${exe_extension}")
+   file(TO_NATIVE_PATH "${arduino_bin_path}avr-gcc${exe_extension}" CMAKE_C_COMPILER)
+   file(TO_NATIVE_PATH "${arduino_bin_path}avr-gcc${exe_extension}" CMAKE_ASM_COMPILER)
+   file(TO_NATIVE_PATH "${arduino_bin_path}avr-g++${exe_extension}" CMAKE_CXX_COMPILER)
 
 elseif(NOT "$ENV{ARDUINO_PATH}" STREQUAL "")
    set(CMAKE_PREFIX_PATH "$ENV{ARDUINO_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
