@@ -19,7 +19,7 @@
 # Determine the device port for flashing
 # (taken over from keyboardio/avr/libraries/Kaleidoscope/etc/kaleidoscope-builder.conf)
 #
-if(APPLE)
+if(CMAKE_HOST_APPLE)
 
    macro(get_device_port cmd_)
       if("${device_port}" STREQUAL "")
