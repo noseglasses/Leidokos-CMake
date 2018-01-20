@@ -27,7 +27,17 @@ build_script:
       cd %BASE_DIR%
       cmake -E make_directory "lcm_build"
       cd lcm_build
-      cmake -G Ninja -DKALEIDOSCOPE_DOWNLOAD_ARDUINO=TRUE %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
+      
+      # Under windows, Arduinos's binary directory must be in the 
+      # PATH variable for the compiler to work. Therefore, we cannot
+      # rely on Leidokos-CMake to install Arduino as it is not possible
+      # to change the PATH variable through the CMake configuration process.
+      #
+      appveyor DownloadFile "http://downloads.arduino.cc/arduino-1.8.5-windows.zip"
+      cmake -E tar xf arduino-1.8.5-windows.zip
+      set PATH=%cd%\arduino-1.8.5\hardware\tools\avr\bin;%PATH%
+      
+      cmake -G Ninja -DARDUINO_SDK_PATH=arduino-1.8.5 %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
       ninja.exe nm_diff
   
 notifications:

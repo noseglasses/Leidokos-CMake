@@ -136,9 +136,9 @@ add_custom_target(
 add_dependencies(firmware_binary_check stock_build "${kaleidoscope_firmware_target}")
 
 if(WIN32)
-   set(cut_cmd "\"C:\cygwin64\bin\cut.exe\"")
-   set(sort_cmd "\"C:\cygwin64\bin\sort.exe\"")
-   set(diff_cmd "\"C:\cygwin64\bin\diff.exe\"")
+   set(cut_cmd "C:\\cygwin64\\bin\\cut.exe")
+   set(sort_cmd "C:\\cygwin64\\bin\\sort.exe")
+   set(diff_cmd "C:\\cygwin64\\bin\\diff.exe")
 else()
    set(cut_cmd "cut")
    set(sort_cmd "sort")

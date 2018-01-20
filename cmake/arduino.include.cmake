@@ -55,7 +55,7 @@ endif()
 #       to use the actually determined ARDUINO_SDK_PATH to 
 #       define CMAKE_PREFIX_PATH.
 #
-if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
+if(KALEIDOSCOPE_DOWNLOAD_ARDUINO OR (NOT "${ARDUINO_SDK_PATH}" STREQUAL ""))
    set(CMAKE_PREFIX_PATH "${ARDUINO_SDK_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
 elseif(NOT "$ENV{ARDUINO_PATH}" STREQUAL "")
    set(CMAKE_PREFIX_PATH "$ENV{ARDUINO_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
