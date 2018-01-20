@@ -36,7 +36,7 @@ build_script:
       cmake -E tar xf arduino-1.8.5-windows.zip
       set PATH=%cd%\arduino-1.8.5\hardware\tools\avr\bin;%PATH%
       
-      cmake -G Ninja -DARDUINO_SDK_PATH=arduino-1.8.5 %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
+      cmake -G Ninja "-DARDUINO_SDK_PATH=%cd%/arduino-1.8.5" %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
       ninja.exe nm_diff
   
 notifications:
