@@ -19,7 +19,6 @@ build: Script
 build_script:
   - cmd: |
       set BASE_DIR=%cd%
-      rem cmake -E make_directory "hardware/keyboardio"
       rmdir "hardware\keyboardio\avr" /s /q
       git clone --recursive https://github.com/keyboardio/Arduino-Boards.git "hardware\keyboardio\avr"
       cd hardware\keyboardio\avr\libraries
@@ -27,12 +26,12 @@ build_script:
       cd %BASE_DIR%
       cmake -E make_directory "lcm_build"
       cd lcm_build
-      
-      # Under windows, Arduinos's binary directory must be in the 
-      # PATH variable for the compiler to work. Therefore, we cannot
-      # rely on Leidokos-CMake to install Arduino as it is not possible
-      # to change the PATH variable through the CMake configuration process.
-      #
+      rem
+      rem Under windows, Arduinos's binary directory must be in the 
+      rem PATH variable for the compiler to work. Therefore, we cannot
+      rem rely on Leidokos-CMake to install Arduino as it is not possible
+      rem to change the PATH variable through the CMake configuration process.
+      rem
       appveyor DownloadFile "http://downloads.arduino.cc/arduino-1.8.5-windows.zip"
       cmake -E tar xf arduino-1.8.5-windows.zip
       set PATH=%cd%\arduino-1.8.5\hardware\tools\avr\bin;%PATH%
