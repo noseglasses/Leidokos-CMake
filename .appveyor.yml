@@ -19,13 +19,13 @@ build: Script
 build_script:
   - cmd: |
       set BASE_DIR=%cd%
-      cmake -E make_directory "hardware/keyboardio"
-      git clone --recursive https://github.com/keyboardio/Arduino-Boards.git hardware/keyboardio/avr
-      cd hardware/keyboardio/avr/libraries
+      cmake -E make_directory "%BASE_DIR%/hardware/keyboardio"
+      git clone --recursive https://github.com/keyboardio/Arduino-Boards.git "%BASE_DIR%/hardware/keyboardio/avr"
+      cd %BASE_DIR%/hardware/keyboardio/avr/libraries
       git clone -b ${TRAVIS_BRANCH} --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
       cd %BASE_DIR%
-      cmake -E make_directory "lcm_build"
-      cd lcm_build
+      cmake -E make_directory "%BASE_DIR%/lcm_build"
+      cd %BASE_DIR%/lcm_build
       cmake -G Ninja -DKALEIDOSCOPE_DOWNLOAD_ARDUINO=TRUE %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
       ninja.exe nm_diff
   
