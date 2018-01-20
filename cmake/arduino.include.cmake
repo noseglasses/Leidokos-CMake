@@ -26,21 +26,15 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
       message("   Downloading ${travis_arduino_download_url}")
       file(DOWNLOAD "${travis_arduino_download_url}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}")
       
-      if(WIN32)
-         set(extraction_args "cfv")
-      else()
-         set(extraction_args "xf")
-      endif()
-      
       execute_process(
-         COMMAND "${CMAKE_COMMAND}" -E tar "${extraction_args}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
+         COMMAND "${CMAKE_COMMAND}" -E tar xf "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
          RESULT_VARIABLE result
          OUTPUT_VARIABLE output
          ERROR_VARIABLE error
          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
       )
       
-      if(NOT "${result}" EQUAL 0)
+      if(NOT result EQUAL 0)
          message("Extraction of Arduino archive ${CMAKE_BINARY_DIR}/${travis_arduino_file} failed")
          message("   result: ${result}")
          message("   output: ${output}")
