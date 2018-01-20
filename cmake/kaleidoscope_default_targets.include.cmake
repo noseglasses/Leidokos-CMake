@@ -136,11 +136,13 @@ add_custom_target(
 add_dependencies(firmware_binary_check stock_build "${kaleidoscope_firmware_target}")
 
 if(WIN32)
-   set(cut_cmd "C:\cygwin64\bin\cut.exe")
-   set(sort_cmd "C:\cygwin64\bin\sort.exe")
+   set(cut_cmd "\"C:\cygwin64\bin\cut.exe\"")
+   set(sort_cmd "\"C:\cygwin64\bin\sort.exe\"")
+   set(diff_cmd "\"C:\cygwin64\bin\diff.exe\"")
 else()
    set(cut_cmd "cut")
    set(sort_cmd "sort")
+   set(diff_cmd "diff")
 endif()
 
 set(nm_diff_script "${cmake_scripts_dir}/nm_diff.script.cmake")
@@ -148,21 +150,21 @@ file(WRITE "${nm_diff_script}" "\
 set(nm_out_legacy \"${CMAKE_BINARY_DIR}/nm_legacy.txt\")
 execute_process(
    COMMAND \"${AVRNM_PROGRAM}\" -C \"${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware/output/${product_id}-Firmware/${product_id}-Firmware-latest.elf\"
-   COMMAND cut \"-d \" -f3
-   COMMAND sort
+   COMMAND ${cut_cmd} \"-d \" -f3
+   COMMAND ${sort_cmd}
    OUTPUT_FILE \"\${nm_out_legacy}\"
 )
 
 set(nm_out_new \"${CMAKE_BINARY_DIR}/nm_new.txt\")
 execute_process(
    COMMAND \"${AVRNM_PROGRAM}\" -C \"${CMAKE_BINARY_DIR}/${kaleidoscope_firmware_target}.elf\"
-   COMMAND cut \"-d \" -f3
-   COMMAND sort
+   COMMAND ${cut_cmd} \"-d \" -f3
+   COMMAND ${sort_cmd}
    OUTPUT_FILE \"\${nm_out_new}\"
 )
 
 execute_process(
-   COMMAND diff \"\${nm_out_legacy}\" \"\${nm_out_new}\"
+   COMMAND ${diff_cmd} \"\${nm_out_legacy}\" \"\${nm_out_new}\"
    OUTPUT_VARIABLE output
    ERROR_VARIABLE error
    RESULT_VARIABLE diff_result
