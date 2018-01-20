@@ -8,7 +8,7 @@ install:
        cmake -E rename "ninja.exe" "ninja/ninja.exe"
        set PATH=%cd%\ninja;%PATH%
 
-build:
+build_script:
   - cmd: |
       set BASE_DIR=%cd%
       cmake -E make_directory "hardware/keyboardio"
