@@ -26,13 +26,12 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
       message("   Downloading ${travis_arduino_download_url}")
       file(DOWNLOAD "${travis_arduino_download_url}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}")
       
-      get_filename_component(archive_extension "${travis_arduino_file}" EXT)
-      
-      if("${archive_extension}" STREQUAL ".zip")
+      if(WIN32)
          set(extraction_args "cfv")
-      elseif("${archive_extension}" STREQUAL ".tar.xz")
+      else()
          set(extraction_args "xf")
       endif()
+      
       execute_process(
          COMMAND "${CMAKE_COMMAND}" -E tar "${extraction_args}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
          RESULT_VARIABLE result
