@@ -3,24 +3,30 @@ branches:
   # whitelist
   only:
     - master
+    
+cache:
+  - C:\projects\leidokos-cmake\ninja
+  - C:\projects\leidokos-cmake\arduino-1.8.5
 
 install:
   # Install ninja
   - cmd: |
-       set NINJA_VERSION="1.6.0"
-       appveyor DownloadFile "https://github.com/ninja-build/ninja/releases/download/v%NINJA_VERSION%/ninja-win.zip"
-       cmake -E tar xf "ninja-win.zip"
-       cmake -E make_directory "ninja"
-       cmake -E rename "ninja.exe" "ninja/ninja.exe"
+       set NINJA_VERSION="1.8.2"
+       if exist "C:\projects\leidokos-cmake\ninja\" set GETNINJA=rem
+       %GETNINJA% appveyor DownloadFile "https://github.com/ninja-build/ninja/releases/download/v%NINJA_VERSION%/ninja-win.zip"
+       %GETNINJA% cmake -E tar xf "ninja-win.zip"
+       %GETNINJA% cmake -E make_directory "ninja"
+       %GETNINJA% cmake -E rename "ninja.exe" "ninja/ninja.exe"
        set PATH=%cd%\ninja;%PATH%
-       rem
+       
        rem Under windows, Arduinos's binary directory must be in the 
        rem PATH variable for the compiler to work. Therefore, we cannot
        rem rely on Leidokos-CMake to install Arduino as it is not possible
        rem to change the PATH variable through the CMake configuration process.
-       rem
-       appveyor DownloadFile "http://downloads.arduino.cc/arduino-1.8.5-windows.zip"
-       cmake -E tar xf arduino-1.8.5-windows.zip
+       
+       if exist "C:\projects\leidokos-cmake\arduino-1.8.5\" set GETARDUINO=rem
+       %GETARDUINO% appveyor DownloadFile "http://downloads.arduino.cc/arduino-1.8.5-windows.zip"
+       %GETARDUINO% cmake -E tar xf arduino-1.8.5-windows.zip
        set PATH=%cd%\arduino-1.8.5\hardware\tools\avr\bin;%PATH%
        
 build: Script
