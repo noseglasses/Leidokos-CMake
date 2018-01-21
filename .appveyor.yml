@@ -11,35 +11,44 @@ branches:
     - master
     
 cache:
-  - C:\projects\leidokos-cmake\ninja
-  - C:\projects\leidokos-cmake\arduino-1.8.5
+  - C:\projects\deps
+  
+environment:
+  NINJA_VERSION: "1.8.2"
+  ARDUINO_VERSION: "1.8.5"
 
 install:
+  ############################################################################
+  # All external dependencies are installed in C:\projects\deps
+  ############################################################################
+  - cmd: mkdir C:\projects\deps
+  - cmd: cd C:\projects\deps
+  
   # Install ninja
   - cmd: |
-       set NINJA_VERSION="1.8.2"
-       if exist "C:\projects\leidokos-cmake\ninja\" set GETNINJA=rem
+       if exist "C:\projects\deps\ninja\" set GETNINJA=rem
        %GETNINJA% appveyor DownloadFile "https://github.com/ninja-build/ninja/releases/download/v%NINJA_VERSION%/ninja-win.zip"
        %GETNINJA% cmake -E tar xf "ninja-win.zip"
        %GETNINJA% cmake -E make_directory "ninja"
        %GETNINJA% cmake -E rename "ninja.exe" "ninja/ninja.exe"
-       set PATH=%cd%\ninja;%PATH%
+       set PATH=C:\projects\deps\ninja;%PATH%
        
   # Under windows, Arduinos's binary directory must be in the 
   # PATH variable for the compiler to work. Therefore, we cannot
   # rely on Leidokos-CMake to install Arduino as it is not possible
   # to change the PATH variable through the CMake configuration process.
   - cmd: |
-       if exist "C:\projects\leidokos-cmake\arduino-1.8.5\" set GETARDUINO=rem
-       %GETARDUINO% appveyor DownloadFile "http://downloads.arduino.cc/arduino-1.8.5-windows.zip"
-       %GETARDUINO% cmake -E tar xf arduino-1.8.5-windows.zip
-       set PATH=%cd%\arduino-1.8.5\hardware\tools\avr\bin;%PATH%
+       if exist "C:\projects\deps\arduino-%ARDUINO_VERSION%\" set GETARDUINO=rem
+       %GETARDUINO% appveyor DownloadFile "http://downloads.arduino.cc/arduino-%ARDUINO_VERSION%-windows.zip"
+       %GETARDUINO% cmake -E tar xf arduino-%ARDUINO_VERSION%-windows.zip
+       set PATH=C:\projects\deps\arduino-%ARDUINO_VERSION%\hardware\tools\avr\bin;%PATH%
        
 build: Script
 
 build_script:
   - cmd: |
-      set BASE_DIR=%cd%
+      set BASE_DIR=C:\projects\leidokos-cmake
+      cd %BASE_DIR%
       rmdir "hardware\keyboardio\avr" /s /q
       git clone --recursive https://github.com/keyboardio/Arduino-Boards.git "hardware\keyboardio\avr"
       cd hardware\keyboardio\avr\libraries
@@ -47,8 +56,8 @@ build_script:
       cd %BASE_DIR%
       cmake -E make_directory "lcm_build"
       cd lcm_build
-      cmake -G Ninja "-DARDUINO_SDK_PATH=C:/projects/leidokos-cmake/arduino-1.8.5" %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
-      ninja.exe nm_diff
+      cmake -G Ninja "-DARDUINO_SDK_PATH=C:/projects/leidokos-cmake/arduino-%ARDUINO_VERSION%" %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
+      cmake --build . --target nm_diff
   
 notifications:
   - provider: Email
