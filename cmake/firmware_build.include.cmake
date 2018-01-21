@@ -89,10 +89,11 @@ endif()
 # would be build and linked and thus lead to ambiguously defined 
 # symbols.
 #
+file(TO_CMAKE_PATH "${ARDUINO_SDK_PATH}" ARDUINO_SDK_PATH_native)
 set(ARDUINO_LIBRARY_BLACKLIST 
    "\
-${ARDUINO_SDK_PATH}/libraries/Keyboard/src;\
-${ARDUINO_SDK_PATH}/libraries/Mouse/src;\
+${ARDUINO_SDK_PATH_native}/libraries/Keyboard/src;\
+${ARDUINO_SDK_PATH_native}/libraries/Mouse/src;\
 ${blacklisted_libraries}\
 "
    CACHE INTERNAL "")
