@@ -56,7 +56,7 @@ build_script:
       cd %BASE_DIR%
       cmake -E make_directory "lcm_build"
       cd lcm_build
-      cmake -G Ninja "-DARDUINO_SDK_PATH=C:/projects/leidokos-cmake/arduino-%ARDUINO_VERSION%" %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
+      cmake -G Ninja "-DARDUINO_SDK_PATH=C:/projects/deps/arduino-%ARDUINO_VERSION%" %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
       cmake --build . --target nm_diff
   
 notifications:
