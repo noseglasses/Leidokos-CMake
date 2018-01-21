@@ -13,14 +13,15 @@ branches:
 cache:
   - C:\projects\deps
   
-environment:
-  DEPS_DIR: C:\projects\deps
-  NINJA_VERSION: 1.8.2
-  NINJA_DIR: '%DEPS_DIR%\ninja'
-  ARDUINO_VERSION: 1.8.5
-  ARDUINO_DIR: '%DEPS_DIR%\arduino-%ARDUINO_VERSION%'
-  ARDUINO_BIN_DIR: '%ARDUINO_DIR%\hardware\tools\avr\bin'
-
+init:
+  - cmd: |
+       set DEPS_DIR: C:\projects\deps
+       set NINJA_VERSION: 1.8.2
+       set NINJA_DIR: '%DEPS_DIR%\ninja'
+       set ARDUINO_VERSION: 1.8.5
+       set ARDUINO_DIR: '%DEPS_DIR%\arduino-%ARDUINO_VERSION%'
+       set ARDUINO_BIN_DIR: '%ARDUINO_DIR%\hardware\tools\avr\bin'
+  
 install:
   ############################################################################
   # All external dependencies are installed in C:\projects\deps
@@ -28,13 +29,18 @@ install:
   - cmd: mkdir %DEPS_DIR%
   - cmd: cd %DEPS_DIR%
   
+  ############################################################################
   # Install ninja
+  ############################################################################
   - cmd: |
        cd %NINJA_DIR%
        if not exist ninja.exe appveyor DownloadFile https://github.com/ninja-build/ninja/releases/download/v%NINJA_VERSION%/ninja-win.zip
        if not exist ninja.exe 7z x ninja-win.zip
        set PATH=%NINJA_DIR%;%PATH%
        
+  ############################################################################
+  # Install Arduino
+  ############################################################################
   # Under windows, Arduinos's binary directory must be in the 
   # PATH variable for the compiler to work. Therefore, we cannot
   # rely on Leidokos-CMake to install Arduino as it is not possible
