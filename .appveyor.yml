@@ -1,3 +1,9 @@
+platform:
+  - x64
+configuration:
+  #- Debug
+  - Release
+
 # branches to build
 branches:
   # whitelist
@@ -19,11 +25,11 @@ install:
        %GETNINJA% cmake -E rename "ninja.exe" "ninja/ninja.exe"
        set PATH=%cd%\ninja;%PATH%
        
-       rem Under windows, Arduinos's binary directory must be in the 
-       rem PATH variable for the compiler to work. Therefore, we cannot
-       rem rely on Leidokos-CMake to install Arduino as it is not possible
-       rem to change the PATH variable through the CMake configuration process.
-       
+  # Under windows, Arduinos's binary directory must be in the 
+  # PATH variable for the compiler to work. Therefore, we cannot
+  # rely on Leidokos-CMake to install Arduino as it is not possible
+  # to change the PATH variable through the CMake configuration process.
+  - cmd: |
        if exist "C:\projects\leidokos-cmake\arduino-1.8.5\" set GETARDUINO=rem
        %GETARDUINO% appveyor DownloadFile "http://downloads.arduino.cc/arduino-1.8.5-windows.zip"
        %GETARDUINO% cmake -E tar xf arduino-1.8.5-windows.zip
