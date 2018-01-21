@@ -120,7 +120,7 @@ set(ENV{ARDUINO_SDK_PATH} \"${cmake_arduino_sdk_path}\")
 set(ENV{ARDUINO_PATH} \"${cmake_arduino_sdk_path}\")
 
 execute_process(
-   COMMAND ${CMAKE_COMMAND} --build .
+   COMMAND \"${CMAKE_COMMAND}\" --build .
    WORKING_DIRECTORY \"${KALEIDOSCOPE_LIBRARIES_DIR}/${product_id}-Firmware\"
 )
 ")
