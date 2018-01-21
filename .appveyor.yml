@@ -15,13 +15,13 @@ cache:
   
 init:
   - cmd: |
-       set DEPS_DIR: C:\projects\deps
-       set NINJA_VERSION: 1.8.2
-       set NINJA_DIR: '%DEPS_DIR%\ninja'
-       set ARDUINO_VERSION: 1.8.5
-       set ARDUINO_DIR: '%DEPS_DIR%\arduino-%ARDUINO_VERSION%'
-       set ARDUINO_BIN_DIR: '%ARDUINO_DIR%\hardware\tools\avr\bin'
-  
+       set DEPS_DIR=C:\projects\deps
+       set NINJA_VERSION=1.8.2
+       set NINJA_DIR="%DEPS_DIR%\ninja"
+       set ARDUINO_VERSION=1.8.5
+       set ARDUINO_DIR="%DEPS_DIR%\arduino-%ARDUINO_VERSION%"
+       set ARDUINO_BIN_DIR="%ARDUINO_DIR%\hardware\tools\avr\bin"
+       
 install:
   ############################################################################
   # All external dependencies are installed in C:\projects\deps
