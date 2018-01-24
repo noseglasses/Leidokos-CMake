@@ -72,7 +72,7 @@ build_script:
       echo %ARDUINO_DIR%
       rem cmake -G Ninja "-DARDUINO_SDK_PATH=%ARDUINO_DIR%" %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
       cmake -G "Unix Makefiles" "-DCMAKE_MAKE_PROGRAM=C:\msys64\usr\bin\make.exe" "-DARDUINO_SDK_PATH=%ARDUINO_DIR%" %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
-      rem cmake --build . --target nm_diff
+      cmake --build . --target nm_diff
       
   
 notifications:
