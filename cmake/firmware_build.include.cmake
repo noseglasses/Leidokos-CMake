@@ -31,15 +31,7 @@ set(kaleidoscope_firmware_target "kaleidoscope.firmware")
 #
 link_directories("${KALEIDOSCOPE_LIBRARIES_DIR}")
 
-# Make sure that all Arduino library dirs are exported 
-# as include (-I...) directories.
-#
-file(GLOB dirs "${KALEIDOSCOPE_LIBRARIES_DIR}/*")
-foreach(dir ${dirs})
-   include_directories("${dir}")
-   include_directories("${dir}/src")
-   include_directories("${dir}/src/Kaleidoscope")
-endforeach()
+include_directories("${KALEIDOSCOPE_LIBRARIES_DIR}/Kaleidoscope-Hardware-${product_id}/src")
 
 # Defining ${vendor_id_upper}_CORES_PATH is necessary as
 # hardware/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID} does not always come with a "cores"
@@ -60,6 +52,7 @@ set(all_add_src)
 foreach(add_lib ${platform_additional_libraries})
    file(GLOB_RECURSE add_src "${KALEIDOSCOPE_LIBRARIES_DIR}/${add_lib}/*.cpp")
    list(APPEND all_add_src ${add_src})
+   include_directories("${KALEIDOSCOPE_LIBRARIES_DIR}/${add_lib}/src")
 endforeach()
 
 set(KALEIDOSCOPE_ADDITIONAL_SOURCES "" CACHE STRING
