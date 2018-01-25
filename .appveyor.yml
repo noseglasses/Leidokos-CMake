@@ -21,15 +21,12 @@ init:
        set ARDUINO_VERSION=1.8.5
        set ARDUINO_DIR=%DEPS_DIR%\arduino-%ARDUINO_VERSION%
        set ARDUINO_BIN_DIR=%ARDUINO_DIR%\hardware\tools\avr\bin
-       #set ARDUINO_BIN_DIR_2=%ARDUINO_DIR%\hardware\tools\avr\avr\bin
-       #set ARDUINO_BIN_DIR_3=%ARDUINO_DIR%\hardware\tools\avr\libexec\gcc\avr\4.9.2
        
        set PATH=%NINJA_DIR%;%PATH%
-       #set PATH=%ARDUINO_BIN_DIR%;%ARDUINO_BIN_DIR_2%;%ARDUINO_BIN_DIR_3%;%PATH%
        set PATH=%ARDUINO_BIN_DIR%
        
-       # Use msys2 for all Unix-Like binaries
-       #
+       rem Use msys2 for all Unix-Like binaries
+       rem
        set PATH=C:\msys64\usr\bin;%PATH%
        
 install:
