@@ -35,6 +35,12 @@ install: |
           export ARDUINO_DIR=${DEPS_DIR}/arduino-${ARDUINO_VERSION}
        fi
     fi
+    
+    if [ "${TRAVIS_OS_NAME}" == "osx" ]; then
+       export ARDUINO_DIR=${DEPS_DIR}/Arduino.app/Contents/Java
+    else
+       export ARDUINO_DIR=${DEPS_DIR}/arduino-${ARDUINO_VERSION}
+    fi
   
 script: 
   - cd $HOME
