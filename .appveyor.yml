@@ -21,11 +21,16 @@ init:
        set ARDUINO_VERSION=1.8.5
        set ARDUINO_DIR=%DEPS_DIR%\arduino-%ARDUINO_VERSION%
        set ARDUINO_BIN_DIR=%ARDUINO_DIR%\hardware\tools\avr\bin
-       set ARDUINO_BIN_DIR_2=%ARDUINO_DIR%\hardware\tools\avr\avr\bin
-       set ARDUINO_BIN_DIR_3=%ARDUINO_DIR%\hardware\tools\avr\libexec\gcc\avr\4.9.2
+       #set ARDUINO_BIN_DIR_2=%ARDUINO_DIR%\hardware\tools\avr\avr\bin
+       #set ARDUINO_BIN_DIR_3=%ARDUINO_DIR%\hardware\tools\avr\libexec\gcc\avr\4.9.2
        
        set PATH=%NINJA_DIR%;%PATH%
-       set PATH=%ARDUINO_BIN_DIR%;%ARDUINO_BIN_DIR_2%;%ARDUINO_BIN_DIR_3%;%PATH%
+       #set PATH=%ARDUINO_BIN_DIR%;%ARDUINO_BIN_DIR_2%;%ARDUINO_BIN_DIR_3%;%PATH%
+       set PATH=%ARDUINO_BIN_DIR%
+       
+       # Use msys2 for all Unix-Like binaries
+       #
+       set PATH=C:\msys64\usr\bin;%PATH%
        
 install:
   ############################################################################
@@ -74,7 +79,6 @@ build_script:
       cmake -G "Unix Makefiles" "-DCMAKE_MAKE_PROGRAM=C:\msys64\usr\bin\make.exe" "-DARDUINO_SDK_PATH=%ARDUINO_DIR%" %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
       cmake --build . --target nm_diff
       
-  
 notifications:
   - provider: Email
     to:
