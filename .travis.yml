@@ -10,21 +10,42 @@ branches:
   only: 
     - master
     
-#before_install:
-  #- sudo apt-get -qq update
-  #- sudo apt-get install -y cmake
+env:
+  - DEPS_DIR=$HOME/deps
+  - ARDUINO_VERSION=1.8.5
+  - ARDUINO_DIR=${DEPS_DIR}/arduino-${ARDUINO_VERSION}
+    
+install:
+  # Install Arduino SDK
+  #
+  - if [ ! -d "${DEPS_DIR}" ]; then
+  -    mkdir -p "${DEPS_DIR}"
+  -    cd "${DEPS_DIR}"
+  -    if [ "${TRAVIS_OS_NAME}" == "osx" ]; then
+  -       ARDUINO_HOST_PLATFORM="macosx"
+  -       ARDUINO_ARCHIVE="arduino-%ARDUINO_VERSION%-${ARDUINO_HOST_PLATFORM}.zip"
+  -       wget "http://downloads.arduino.cc/${ARDUINO_ARCHIVE}"
+  -       unzip "${ARDUINO_ARCHIVE}"
+  -    else
+  -       ARDUINO_HOST_PLATFORM="linux64"
+  -       ARDUINO_ARCHIVE="arduino-%ARDUINO_VERSION%-${ARDUINO_HOST_PLATFORM}.tar.xz"
+  -       wget "http://downloads.arduino.cc/${ARDUINO_ARCHIVE}"
+  -       tar xJf "${ARDUINO_ARCHIVE}"
+  -    fi
+  - fi
   
 script:
   - cd $HOME
   - mkdir -p hardware/keyboardio
   - git clone --recursive https://github.com/keyboardio/Arduino-Boards.git hardware/keyboardio/avr
   - cd hardware/keyboardio/avr/libraries
-  - git clone -b ${TRAVIS_BRANCH} --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
+  - git clone -b "${TRAVIS_BRANCH}" --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
   - cd $HOME
   - mkdir kcm_build
   - cd kcm_build
-  - cmake -DKALEIDOSCOPE_DOWNLOAD_ARDUINO=TRUE $HOME/hardware/keyboardio/avr/libraries/Leidokos-CMake
-  - make nm_diff
+  - cmake "-DARDUINO_SDK_PATH=${ARDUINO_DIR}" \
+    $HOME/hardware/keyboardio/avr/libraries/Leidokos-CMake
+  - cmake --build . --target nm_diff
   
 notifications:
   email:
@@ -33,4 +54,7 @@ notifications:
     on_failure: always
     
 cache:
+  directories:
+    - ${DEPS_DIR}
+    
 ccache: true
