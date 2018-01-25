@@ -18,18 +18,18 @@ env:
     
 install: |
     # Install Arduino SDK
-    #
-    if [ ! -d "${DEPS_DIR}" ]; then
-       mkdir -p "${DEPS_DIR}"
+    #    
+    mkdir -p "${DEPS_DIR}"
+    if [ ! -d "${DEPS_DIR}/arduino-${ARDUINO_VERSION}" ]; then
        cd "${DEPS_DIR}"
        if [ "${TRAVIS_OS_NAME}" == "osx" ]; then
           ARDUINO_HOST_PLATFORM="macosx"
-          ARDUINO_ARCHIVE="arduino-%ARDUINO_VERSION%-${ARDUINO_HOST_PLATFORM}.zip"
+          ARDUINO_ARCHIVE="arduino-${ARDUINO_VERSION}-${ARDUINO_HOST_PLATFORM}.zip"
           wget "http://downloads.arduino.cc/${ARDUINO_ARCHIVE}"
           unzip "${ARDUINO_ARCHIVE}"
        else
           ARDUINO_HOST_PLATFORM="linux64"
-          ARDUINO_ARCHIVE="arduino-%ARDUINO_VERSION%-${ARDUINO_HOST_PLATFORM}.tar.xz"
+          ARDUINO_ARCHIVE="arduino-${ARDUINO_VERSION}-${ARDUINO_HOST_PLATFORM}.tar.xz"
           wget "http://downloads.arduino.cc/${ARDUINO_ARCHIVE}"
           tar xJf "${ARDUINO_ARCHIVE}"
        fi
