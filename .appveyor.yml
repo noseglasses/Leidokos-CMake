@@ -11,7 +11,7 @@ branches:
     - master
     
 cache:
-  - C:\projects\deps
+  - C:\projects\deps -> .appveyor.yml
   
 init:
   - cmd: |

@@ -13,8 +13,7 @@ branches:
 env:
   global:
     - DEPS_DIR=$HOME/deps \
-      ARDUINO_VERSION=1.8.5 \
-      ARDUINO_DIR=${DEPS_DIR}/arduino-${ARDUINO_VERSION}
+      ARDUINO_VERSION=1.8.5
     
 install: |
     # Install Arduino SDK
@@ -26,12 +25,14 @@ install: |
           ARDUINO_HOST_PLATFORM="macosx"
           ARDUINO_ARCHIVE="arduino-${ARDUINO_VERSION}-${ARDUINO_HOST_PLATFORM}.zip"
           wget "http://downloads.arduino.cc/${ARDUINO_ARCHIVE}"
-          unzip "${ARDUINO_ARCHIVE}"
+          unzip "${ARDUINO_ARCHIVE}" \
+          export ARDUINO_DIR=${DEPS_DIR}/Arduino.app/Contents/Java
        else
           ARDUINO_HOST_PLATFORM="linux64"
           ARDUINO_ARCHIVE="arduino-${ARDUINO_VERSION}-${ARDUINO_HOST_PLATFORM}.tar.xz"
           wget "http://downloads.arduino.cc/${ARDUINO_ARCHIVE}"
           tar xJf "${ARDUINO_ARCHIVE}"
+          export ARDUINO_DIR=${DEPS_DIR}/arduino-${ARDUINO_VERSION}
        fi
     fi
   

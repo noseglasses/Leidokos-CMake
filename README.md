@@ -1,7 +1,11 @@
 ![status][st:experimental] [![Build Status][travis:image]][travis:status]
+[![Build status]([appveyor:image])]([appveyor:status])
 
 [travis:image]: https://travis-ci.org/CapeLeidokos/Leidokos-CMake.svg?branch=master
 [travis:status]: https://travis-ci.org/CapeLeidokos/Leidokos-CMake
+
+[appveyor:image]: https://ci.appveyor.com/api/projects/status/f101o95ppui2lqar/branch/master?svg=true
+[appveyor:status]: https://ci.appveyor.com/project/noseglasses/leidokos-cmake/branch/master
 
 [st:stable]: https://img.shields.io/badge/stable-✔-black.svg?style=flat&colorA=44cc11&colorB=494e52
 [st:broken]: https://img.shields.io/badge/broken-X-black.svg?style=flat&colorA=e05d44&colorB=494e52
