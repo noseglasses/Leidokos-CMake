@@ -35,18 +35,18 @@ install: |
        fi
     fi
   
-script: |
-    cd $HOME
-    mkdir -p hardware/keyboardio
-    git clone --recursive https://github.com/keyboardio/Arduino-Boards.git hardware/keyboardio/avr
-    cd hardware/keyboardio/avr/libraries
-    git clone -b "${TRAVIS_BRANCH}" --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
-    cd $HOME
-    mkdir kcm_build
-    cd kcm_build
-    cmake "-DARDUINO_SDK_PATH=${ARDUINO_DIR}" \
+script: 
+  - cd $HOME
+  - mkdir -p hardware/keyboardio
+  - git clone --recursive https://github.com/keyboardio/Arduino-Boards.git hardware/keyboardio/avr
+  - cd hardware/keyboardio/avr/libraries
+  - git clone -b "${TRAVIS_BRANCH}" --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
+  - cd $HOME
+  - mkdir kcm_build
+  - cd kcm_build
+  - cmake "-DARDUINO_SDK_PATH=${ARDUINO_DIR}" \
     $HOME/hardware/keyboardio/avr/libraries/Leidokos-CMake
-    cmake --build . --target nm_diff
+  - cmake --build . --target nm_diff
   
 notifications:
   email:
@@ -57,5 +57,3 @@ notifications:
 cache:
   directories:
     - ${DEPS_DIR}
-    
-ccache: true
