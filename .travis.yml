@@ -12,9 +12,9 @@ branches:
     
 env:
   global:
-    - DEPS_DIR=$HOME/deps
-    - ARDUINO_VERSION=1.8.5
-    - ARDUINO_DIR=${DEPS_DIR}/arduino-${ARDUINO_VERSION}
+    - DEPS_DIR=$HOME/deps \
+      ARDUINO_VERSION=1.8.5 \
+      ARDUINO_DIR=${DEPS_DIR}/arduino-${ARDUINO_VERSION}
     
 install:
   # Install Arduino SDK
