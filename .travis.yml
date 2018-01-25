@@ -45,6 +45,7 @@ script:
   - mkdir kcm_build
   - cd kcm_build
   - echo "ARDUINO_DIR=${ARDUINO_DIR}"
+  - tree ${ARDUINO_DIR}
   - cmake "-DARDUINO_SDK_PATH=${ARDUINO_DIR}" $HOME/hardware/keyboardio/avr/libraries/Leidokos-CMake
   - cmake --build . --target nm_diff
   
