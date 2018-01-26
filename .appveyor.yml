@@ -13,6 +13,9 @@ branches:
 cache:
   - C:\projects\deps -> .appveyor.yml
   
+environment:
+  APPVEYOR_SAVE_CACHE_ON_ERROR: true
+  
 init:
   - cmd: |
        set DEPS_DIR=C:\projects\deps
