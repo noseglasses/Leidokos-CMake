@@ -23,6 +23,14 @@ install: |
     
     if [ "${TRAVIS_OS_NAME}" == "osx" ]; then
     
+      mkdir AbC
+      cd AbC
+      touch cDe.txt
+      ls ${DEPS_DIR}/abc/cde.txt
+      ls ${DEPS_DIR}/AbC/cDe.tx[t]
+      
+      cd "${DEPS_DIR}"
+    
       export ARDUINO_DIR=${DEPS_DIR}/Arduino.app/Contents/Java
       
       if [ ! -d "${ARDUINO_DIR}" ]; then
