@@ -1,5 +1,5 @@
 ![status][st:experimental] [![Build Status][travis:image]][travis:status]
-[![Build status]([appveyor:image])]([appveyor:status])
+[![Build status][appveyor:image]][appveyor:status]
 
 [travis:image]: https://travis-ci.org/CapeLeidokos/Leidokos-CMake.svg?branch=master
 [travis:status]: https://travis-ci.org/CapeLeidokos/Leidokos-CMake
