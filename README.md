@@ -331,12 +331,8 @@ ccmake ..
 ```
 
 ## Supported platforms
-Leidokos-CMake is tested on Ubuntu Linux (16.04) with Arduino 1.8.5. As CMake and
-arduino-cmake are both platform independent, this build system is supposed to
-work on other platforms, too.
+GNU/Linux, MacOS, Windows
 
-Testers working with other platforms are highly welcome!
-
-## Travis-testing
+## Regression-testing
 Currently we test if the build system actually builds the stock firmware and if the symbols in the firmware that
-is build do match those of the stock firmware if build with the legacy GNU make build system.
+is build do match those of the stock firmware if build with the legacy GNU make build system. This is done on GNU/Linux and MacOS ([travis]([travis:status]) as well as on Windows ([appveyor]([appveyor:status])).
