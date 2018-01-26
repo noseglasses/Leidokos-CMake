@@ -25,7 +25,7 @@
 # can be set by the including CMake code.
 #
 set(LEIDOKOS_CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}"
-   CACHE PATH "The path to the Leidokos-CMake sources. This is only \"
+   CACHE INTERNAL "The path to the Leidokos-CMake sources. This is only \"
 required to be set when Leidokos-CMake is wrapped \
 by other CMake build systems.")
 

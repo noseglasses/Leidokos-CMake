@@ -23,14 +23,27 @@ if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
 
    if(NOT EXISTS "${travis_arduino_path}")
       message("Installing Arduino...")
+      message("   Downloading ${travis_arduino_download_url}")
       file(DOWNLOAD "${travis_arduino_download_url}" "${CMAKE_BINARY_DIR}/${travis_arduino_file}")
+      
       execute_process(
          COMMAND "${CMAKE_COMMAND}" -E tar xf "${CMAKE_BINARY_DIR}/${travis_arduino_file}"
+         RESULT_VARIABLE result
+         OUTPUT_VARIABLE output
+         ERROR_VARIABLE error
          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
       )
+      
+      if(NOT result EQUAL 0)
+         message("Extraction of Arduino archive ${CMAKE_BINARY_DIR}/${travis_arduino_file} failed")
+         message("   result: ${result}")
+         message("   output: ${output}")
+         message("   error: ${error}")
+         message(FATAL_ERROR "Bailing out.")
+      endif()
    endif()
    
-   set(ARDUINO_SDK_PATH "${CMAKE_BINARY_DIR}/${travis_arduino}" CACHE PATH "")
+   set(ARDUINO_SDK_PATH "${travis_arduino_path}" CACHE PATH "")
 endif()
 
 # Make sure that the correct avr-gcc of the arduino installation
@@ -42,8 +55,8 @@ endif()
 #       to use the actually determined ARDUINO_SDK_PATH to 
 #       define CMAKE_PREFIX_PATH.
 #
-if(KALEIDOSCOPE_DOWNLOAD_ARDUINO)
-   set(CMAKE_PREFIX_PATH "${travis_arduino_path}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
+if(KALEIDOSCOPE_DOWNLOAD_ARDUINO OR (NOT "${ARDUINO_SDK_PATH}" STREQUAL ""))
+   set(CMAKE_PREFIX_PATH "${ARDUINO_SDK_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
 elseif(NOT "$ENV{ARDUINO_PATH}" STREQUAL "")
    set(CMAKE_PREFIX_PATH "$ENV{ARDUINO_PATH}/hardware/tools/avr;${CMAKE_PREFIX_PATH}")
 elseif(NOT "$ENV{ARDUINO_SDK_PATH}" STREQUAL "")

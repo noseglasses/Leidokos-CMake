@@ -107,6 +107,7 @@ endif()
 #
 set(KALEIDOSCOPE_HARDWARE_BASE_PATH "${default_hardware_base_path}" 
    CACHE PATH "The path to the Kaleidoscope hardware base directory.")
+mark_as_advanced(KALEIDOSCOPE_HARDWARE_BASE_PATH)
    
 if(COMMAND after_KALEIDOSCOPE_HARDWARE_BASE_PATH_defined)
    after_KALEIDOSCOPE_HARDWARE_BASE_PATH_defined()
@@ -114,9 +115,11 @@ endif()
    
 set(KALEIDOSCOPE_VENDOR_ID "${default_vendor_id}" 
    CACHE STRING "The vendor id of the board to build a firmware for.")
+mark_as_advanced(KALEIDOSCOPE_VENDOR_ID)
 
 set(KALEIDOSCOPE_ARCHITECTURE_ID "${default_architecture_id}"
    CACHE STRING "The architecture id of the board to build a firmware for.")
+mark_as_advanced(KALEIDOSCOPE_ARCHITECTURE_ID)
 
 if(NOT EXISTS "${KALEIDOSCOPE_HARDWARE_BASE_PATH}")
    message(FATAL_ERROR "Unable to find \
@@ -143,6 +146,7 @@ endif()
 
 set(KALEIDOSCOPE_LIBRARIES_DIR "${kaleidoscope_platform_dir}/libraries" CACHE PATH 
    "A path to the libraries directory where the Kaleidoscope libraries live.")
+mark_as_advanced(KALEIDOSCOPE_LIBRARIES_DIR)
    
 # include_directories("${KALEIDOSCOPE_LIBRARIES_DIR}")
    
@@ -200,6 +204,7 @@ endif()
 set(KALEIDOSCOPE_BOARD "${default_board}" CACHE STRING
    "The type of board hardware. \
    Currently supported: ${${vendor_id_upper}_BOARDS} .")
+mark_as_advanced(KALEIDOSCOPE_BOARD)
    
 # Based on the keyboard name, we set some alternative name string variables
 # that are used in the configurations below
