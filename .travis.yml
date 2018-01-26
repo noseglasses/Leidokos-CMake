@@ -19,27 +19,28 @@ install: |
     # Install Arduino SDK
     #    
     mkdir -p "${DEPS_DIR}"
-    if [ ! -d "${DEPS_DIR}/arduino-${ARDUINO_VERSION}" ]; then
-       cd "${DEPS_DIR}"
-       if [ "${TRAVIS_OS_NAME}" == "osx" ]; then
-          ARDUINO_HOST_PLATFORM="macosx"
-          ARDUINO_ARCHIVE="arduino-${ARDUINO_VERSION}-${ARDUINO_HOST_PLATFORM}.zip"
-          wget "http://downloads.arduino.cc/${ARDUINO_ARCHIVE}"
-          unzip "${ARDUINO_ARCHIVE}" \
-          export ARDUINO_DIR=${DEPS_DIR}/Arduino.app/Contents/Java
-       else
-          ARDUINO_HOST_PLATFORM="linux64"
-          ARDUINO_ARCHIVE="arduino-${ARDUINO_VERSION}-${ARDUINO_HOST_PLATFORM}.tar.xz"
-          wget "http://downloads.arduino.cc/${ARDUINO_ARCHIVE}"
-          tar xJf "${ARDUINO_ARCHIVE}"
-          export ARDUINO_DIR=${DEPS_DIR}/arduino-${ARDUINO_VERSION}
-       fi
-    fi
+    cd "${DEPS_DIR}"
     
     if [ "${TRAVIS_OS_NAME}" == "osx" ]; then
-       export ARDUINO_DIR=${DEPS_DIR}/Arduino.app/Contents/Java
+    
+      export ARDUINO_DIR=${DEPS_DIR}/Arduino.app/Contents/Java
+      
+      if [ ! -d "${ARDUINO_DIR}" ]; then
+         ARDUINO_HOST_PLATFORM="macosx"
+         ARDUINO_ARCHIVE="arduino-${ARDUINO_VERSION}-${ARDUINO_HOST_PLATFORM}.zip"
+         wget "http://downloads.arduino.cc/${ARDUINO_ARCHIVE}"
+         unzip "${ARDUINO_ARCHIVE}"
+      fi
     else
-       export ARDUINO_DIR=${DEPS_DIR}/arduino-${ARDUINO_VERSION}
+    
+      export ARDUINO_DIR=${DEPS_DIR}/arduino-${ARDUINO_VERSION}
+      
+      if [ ! -d "${ARDUINO_DIR}" ]; then
+         ARDUINO_HOST_PLATFORM="linux64"
+         ARDUINO_ARCHIVE="arduino-${ARDUINO_VERSION}-${ARDUINO_HOST_PLATFORM}.tar.xz"
+         wget "http://downloads.arduino.cc/${ARDUINO_ARCHIVE}"
+         tar xJf "${ARDUINO_ARCHIVE}"
+      fi
     fi
   
 script: 
