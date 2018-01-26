@@ -335,4 +335,4 @@ GNU/Linux, MacOS, Windows
 
 ## Regression-testing
 Currently we test if the build system actually builds the stock firmware and if the symbols in the firmware that
-is build do match those of the stock firmware if build with the legacy GNU make build system. This is done on GNU/Linux and MacOS ([travis]([travis:status]) as well as on Windows ([appveyor]([appveyor:status])).
+is build do match those of the stock firmware if build with the legacy GNU make build system. This is done on GNU/Linux and MacOS ([travis][travis:status]) as well as on Windows ([appveyor][appveyor:status]).
