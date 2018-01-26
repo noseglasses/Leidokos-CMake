@@ -29,6 +29,9 @@ install: |
       ls ${DEPS_DIR}/abc/cde.txt
       ls ${DEPS_DIR}/AbC/cDe.tx[t]
       ls '${DEPS_DIR}/abc/cde.tx[t]'
+      readlink -f ${DEPS_DIR}/abc/cde.txt
+      readlink -f ${DEPS_DIR}/AbC/cDe.tx[t]
+      readlink -f '${DEPS_DIR}/abc/cde.tx[t]'
       which ls
       
       cd "${DEPS_DIR}"
