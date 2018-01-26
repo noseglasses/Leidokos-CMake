@@ -20,11 +20,11 @@
 #
 set(travis_arduino "arduino-1.8.5")
 
-if(UNIX)
+if(CMAKE_HOST_UNIX)
    set(travis_arduino_file "${travis_arduino}-linux64.tar.xz")
-elseif(APPLE)
+elseif(CMAKE_HOST_APPLE)
    set(travis_arduino_file "${travis_arduino}-macosx.zip")
-else()
+elseif(CMAKE_HOST_WIN32)
    set(travis_arduino_file "${travis_arduino}-windows.zip")
 endif()
 

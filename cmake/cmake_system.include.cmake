@@ -24,7 +24,7 @@ if(NOT EXISTS "${cmake_scripts_dir}")
    file(MAKE_DIRECTORY "${cmake_scripts_dir}")
 endif()
 
-if(WIN32)
+if(CMAKE_HOST_WIN32)
    set(CMAKE_C_USE_RESPONSE_FILE_FOR_LIBRARIES 1)
    set(CMAKE_CXX_USE_RESPONSE_FILE_FOR_LIBRARIES 1)
    set(CMAKE_C_USE_RESPONSE_FILE_FOR_OBJECTS 1)
