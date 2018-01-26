@@ -58,9 +58,12 @@ _include_cmake(travis)
 
 _include_cmake(arduino)
 
-# Using a toolchain file (by Arduino-CMake) strangely overwrites WIN32
+# Using a toolchain file (by Arduino-CMake) strangely overwrites plattform
+# flag variables
 #
 set(was_WIN32 ${WIN32})
+set(was_UNIX ${UNIX})
+set(was_APPLE ${APPLE})
 
 project(Kaleidoscope)
 cmake_minimum_required(VERSION 2.8)
@@ -68,6 +71,9 @@ cmake_minimum_required(VERSION 2.8)
 # Restore the state
 #
 set(WIN32 ${was_WIN32})
+set(UNIX ${was_UNIX})
+set(APPLE ${was_APPLE})
+
 ################################################################################
 # Configure the target platform hardware.
 ################################################################################
