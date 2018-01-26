@@ -28,6 +28,7 @@ install: |
       touch cDe.txt
       ls ${DEPS_DIR}/abc/cde.txt
       ls ${DEPS_DIR}/AbC/cDe.tx[t]
+      ls ${DEPS_DIR}/abc/cde.tx[t]
       
       cd "${DEPS_DIR}"
     
