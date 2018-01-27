@@ -24,10 +24,12 @@
 # instead of CMAKE_SOURCE_DIR. LEIDOKOS_CMAKE_SOURCE_DIR
 # can be set by the including CMake code.
 #
-set(LEIDOKOS_CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}"
-   CACHE INTERNAL "The path to the Leidokos-CMake sources. This is only \"
-required to be set when Leidokos-CMake is wrapped \
-by other CMake build systems.")
+if(NOT DEFINED LEIDOKOS_CMAKE_SOURCE_DIR)
+   set(LEIDOKOS_CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}"
+      CACHE INTERNAL "The path to the Leidokos-CMake sources. This is only \"
+   required to be set when Leidokos-CMake is wrapped \
+   by other CMake build systems.")
+endif()
 
 macro(_include_cmake file_basename_)
    include("${LEIDOKOS_CMAKE_SOURCE_DIR}/cmake/${file_basename_}.include.cmake")
@@ -71,7 +73,9 @@ _include_cmake(platform)
 # Configure the device upload
 ################################################################################
 
-_include_cmake(device_upload)
+if(NOT LEIDOKOS_CMAKE_NO_DEVICE_UPLOAD)
+   _include_cmake(device_upload)
+endif()
 
 ################################################################################
 # Setup Arduino-CMake

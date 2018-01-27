@@ -15,8 +15,6 @@ ${KALEIDOSCOPE_LIBRARIES_DIR}/HID;\
 ${KALEIDOSCOPE_LIBRARIES_DIR}/HID/src;\
 ${KALEIDOSCOPE_LIBRARIES_DIR}/KeyboardioHID;\
 ${KALEIDOSCOPE_LIBRARIES_DIR}/KeyboardioHID/src;\
-${KALEIDOSCOPE_LIBRARIES_DIR}/Kaleidoscope-Ranges;\
-${KALEIDOSCOPE_LIBRARIES_DIR}/Kaleidoscope-Ranges/src\
 ")
 # 
 # function(configure_firmware_target
