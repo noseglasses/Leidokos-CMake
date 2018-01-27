@@ -14,6 +14,9 @@
 # Leidokos-CMake
 An alternative platform independent build system for [Kaleidoscope](https://github.com/keyboardio/Kaleidoscope).
 
+## Supported platforms
+Windows, GNU/Linux, MacOS
+
 ## CapeLeidokos
 Leidokos-CMake is an essential part of the CapeLeidokos develop, testing and build infrastructure for the Kaleidoscope firmware.
 
@@ -329,9 +332,6 @@ is started as
 ```bash
 ccmake ..
 ```
-
-## Supported platforms
-GNU/Linux, MacOS, Windows
 
 ## Regression-testing
 Currently we test if the build system actually builds the stock firmware and if the symbols in the firmware that
