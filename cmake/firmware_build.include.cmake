@@ -31,15 +31,7 @@ set(kaleidoscope_firmware_target "kaleidoscope.firmware")
 #
 link_directories("${KALEIDOSCOPE_LIBRARIES_DIR}")
 
-# Make sure that all Arduino library dirs are exported 
-# as include (-I...) directories.
-#
-file(GLOB dirs "${KALEIDOSCOPE_LIBRARIES_DIR}/*")
-foreach(dir ${dirs})
-   include_directories("${dir}")
-   include_directories("${dir}/src")
-   include_directories("${dir}/src/Kaleidoscope")
-endforeach()
+include_directories("${KALEIDOSCOPE_LIBRARIES_DIR}/Kaleidoscope-Hardware-${product_id}/src")
 
 # Defining ${vendor_id_upper}_CORES_PATH is necessary as
 # hardware/${KALEIDOSCOPE_VENDOR_ID}/${KALEIDOSCOPE_ARCHITECTURE_ID} does not always come with a "cores"
@@ -60,12 +52,14 @@ set(all_add_src)
 foreach(add_lib ${platform_additional_libraries})
    file(GLOB_RECURSE add_src "${KALEIDOSCOPE_LIBRARIES_DIR}/${add_lib}/*.cpp")
    list(APPEND all_add_src ${add_src})
+   include_directories("${KALEIDOSCOPE_LIBRARIES_DIR}/${add_lib}/src")
 endforeach()
 
 set(KALEIDOSCOPE_ADDITIONAL_SOURCES "" CACHE STRING
    "A list of absolute paths of source files that are included in the \
 firmware build. This is only required for advanced use, e.g. when \
 Leidokos-CMake is embedded in another CMake build system.")
+mark_as_advanced(KALEIDOSCOPE_ADDITIONAL_SOURCES)
 
 if(NOT "${KALEIDOSCOPE_ADDITIONAL_SOURCES}" STREQUAL "")
    list(APPEND all_add_src ${KALEIDOSCOPE_ADDITIONAL_SOURCES})
@@ -75,6 +69,7 @@ set(KALEIDOSCOPE_ADDITIONAL_HEADERS "" CACHE STRING
    "A list of absolute paths of header files that are included in the \
 firmware build. This is only required for advanced use, e.g. when \
 Leidokos-CMake is embedded in another CMake build system.")
+mark_as_advanced(KALEIDOSCOPE_ADDITIONAL_HEADERS)
 
 if(NOT "${KALEIDOSCOPE_ADDITIONAL_HEADERS}" STREQUAL "")
    set(add_headers HDRS ${KALEIDOSCOPE_ADDITIONAL_HEADERS})
@@ -87,10 +82,11 @@ endif()
 # would be build and linked and thus lead to ambiguously defined 
 # symbols.
 #
+file(TO_CMAKE_PATH "${ARDUINO_SDK_PATH}" ARDUINO_SDK_PATH_native)
 set(ARDUINO_LIBRARY_BLACKLIST 
    "\
-${ARDUINO_SDK_PATH}/libraries/Keyboard/src;\
-${ARDUINO_SDK_PATH}/libraries/Mouse/src;\
+${ARDUINO_SDK_PATH_native}/libraries/Keyboard/src;\
+${ARDUINO_SDK_PATH_native}/libraries/Mouse/src;\
 ${blacklisted_libraries}\
 "
    CACHE INTERNAL "")
@@ -119,6 +115,7 @@ if(COMMAND kaleidoscope_set_binary_basename_hook)
 endif()
 set(KALEIDOSCOPE_BINARY_BASENAME "${binary_basename_default}" CACHE STRING 
    "An alternative name for the generated firmware binary. The default name is used if empty.")
+mark_as_advanced(KALEIDOSCOPE_BINARY_BASENAME)
    
 if(NOT "${KALEIDOSCOPE_BINARY_BASENAME}" STREQUAL "")
    set_target_properties("${kaleidoscope_firmware_target}" 
