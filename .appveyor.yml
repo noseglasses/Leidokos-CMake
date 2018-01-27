@@ -77,6 +77,7 @@ build_script:
       git clone -b %test_branch% --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
       cd %BASE_DIR%
       cmake -E make_directory "lcm_build"
+      cd lcm_build
       
       rem cmake -G Ninja "-DARDUINO_SDK_PATH=%ARDUINO_DIR%" %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
       
