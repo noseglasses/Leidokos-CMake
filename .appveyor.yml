@@ -37,7 +37,7 @@ install:
   # All external dependencies are installed in C:\projects\deps
   ############################################################################
   - cmd: |
-       if not exists %DEPS_DIR% mkdir %DEPS_DIR%
+       if not exist %DEPS_DIR% mkdir %DEPS_DIR%
   
   ############################################################################
   # Install ninja
@@ -85,8 +85,8 @@ build_script:
       
       cmake --build . --target nm_diff
       
-notifications:
-  - provider: Email
-    to:
-      - shinynoseglasses@gmail.com
-    on_build_failure: true
+#notifications:
+  #- provider: Email
+    #to:
+      #- shinynoseglasses@gmail.com
+    #on_build_failure: true
