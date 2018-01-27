@@ -1,4 +1,4 @@
-![status][st:experimental] [![Build Status][travis:image]][travis:status]
+![status][st:stable] [![Build Status][travis:image]][travis:status]
 [![Build status][appveyor:image]][appveyor:status]
 
 [travis:image]: https://travis-ci.org/CapeLeidokos/Leidokos-CMake.svg?branch=master
