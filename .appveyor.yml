@@ -69,7 +69,7 @@ build_script:
       rmdir "hardware\keyboardio\avr" /s /q
       git clone --recursive https://github.com/keyboardio/Arduino-Boards.git "hardware\keyboardio\avr"
       cd hardware\keyboardio\avr\libraries
-      if "%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%"=="" (
+      if [%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%]==[] (
          set test_branch=%APPVEYOR_REPO_BRANCH%
       ) else (
          set test_branch=%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%
