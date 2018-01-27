@@ -36,7 +36,8 @@ install:
   ############################################################################
   # All external dependencies are installed in C:\projects\deps
   ############################################################################
-  - cmd: mkdir %DEPS_DIR%
+  - cmd: |
+       if not exists %DEPS_DIR% mkdir %DEPS_DIR%
   
   ############################################################################
   # Install ninja
