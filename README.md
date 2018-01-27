@@ -12,7 +12,7 @@
 [st:experimental]: https://img.shields.io/badge/experimental----black.svg?style=flat&colorA=dfb317&colorB=494e52
 
 # Leidokos-CMake
-An alternative platform independent build system for Kaleidoscope.
+An alternative platform independent build system for [Kaleidoscope](https://github.com/keyboardio/Kaleidoscope).
 
 ## CapeLeidokos
 Leidokos-CMake is an essential part of the CapeLeidokos develop, testing and build infrastructure for the Kaleidoscope firmware.
