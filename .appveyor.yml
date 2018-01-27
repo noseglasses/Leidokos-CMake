@@ -69,12 +69,12 @@ build_script:
       rmdir "hardware\keyboardio\avr" /s /q
       git clone --recursive https://github.com/keyboardio/Arduino-Boards.git "hardware\keyboardio\avr"
       cd hardware\keyboardio\avr\libraries
-      git clone -b %APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH% --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
+      if [%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%]==[] set test_branch=%APPVEYOR_REPO_BRANCH%
+      if not [%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%]==[] set test_branch=%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%
+      git clone -b %test_branch% --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
       cd %BASE_DIR%
       cmake -E make_directory "lcm_build"
       cd lcm_build
-      echo %PATH%
-      echo %ARDUINO_DIR%
       
       rem cmake -G Ninja "-DARDUINO_SDK_PATH=%ARDUINO_DIR%" %BASE_DIR%/hardware/keyboardio/avr/libraries/Leidokos-CMake
       
