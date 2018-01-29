@@ -23,7 +23,7 @@ set(kaleidoscope_firmware_target "kaleidoscope.firmware")
 
 # Uncomment this for detailed debugging of Arduino-CMake output.
 #
-arduino_debug_on()
+# arduino_debug_on()
 
 # Allow the standard directory containing Kaleidoscope libraries
 # to be found. Note: Arduino-CMake relies on this to be defined
