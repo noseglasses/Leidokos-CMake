@@ -57,10 +57,15 @@ else()
    -DARDUINO_VIRTUAL\
    " CACHE INTERNAL "")
    
+   # Note: -Wno-missing-braces is necessary to build with clang/XCode
+   #       as most definitions of instances of class Key in Kaleidoscope
+   #       are ill-formed.
+   #
    set(ARDUINO_CXX_FLAGS "\
    -std=gnu++11 \
    -Wall \
    -Wextra \
+   -Wno-missing-braces \
    -DARDUINO_VIRTUAL\
    " CACHE INTERNAL "")
    
