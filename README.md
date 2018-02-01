@@ -7,11 +7,11 @@
 [travis:linux:image]: https://img.shields.io/travis/CapeLeidokos/Leidokos-CMake.svg?style=for-the-badge&label=Linux&branch=master
 [travis:linux:target]: https://travis-ci.org/CapeLeidokos/Leidokos-CMake
 
-[travis:MacOS:image]: https://img.shields.io/travis/CapeLeidokos/Leidokos-CMake.svg?style=for-the-badge&label=MacOS&branch=master
+[travis:MacOS:image]: https://img.shields.io/travis/CapeLeidokos/Leidokos-CMake.svg?style=for-the-badge&label=Mac&branch=master
 [travis:MacOS:target]: https://travis-ci.org/CapeLeidokos/Leidokos-CMake
 
 [appveyor:image]: https://img.shields.io/appveyor/ci/CapeLeidokos/Leidokos-CMake/master.svg?style=for-the-badge&label=Windows
-[appveyor:target]: https://ci.appveyor.com/project/noseglasses/leidokos-cmake/branch/master
+[appveyor:target]: https://ci.appveyor.com/project/CapeLeidokos/Leidokos-CMake/branch/master
 
 [version:image]: https://img.shields.io/github/release/CapeLeidokos/Leidokos-CMake.svg?style=for-the-badge
 [version:target]: https://github.com/CapeLeidokos/Leidokos-CMake/releases
