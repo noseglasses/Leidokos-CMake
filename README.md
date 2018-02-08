@@ -1,15 +1,24 @@
-![status][st:stable] [![Build Status][travis:image]][travis:status]
-[![Build status][appveyor:image]][appveyor:status]
+![status][st:stable]
+[![Build Status][travis:linux:image]][travis:linux:target]
+[![Build Status][travis:MacOS:image]][travis:MacOS:target]
+[![Build status][appveyor:image]][appveyor:target]
+[![Latest version][version:image]][version:target]
 
-[travis:image]: https://travis-ci.org/CapeLeidokos/Leidokos-CMake.svg?branch=master
-[travis:status]: https://travis-ci.org/CapeLeidokos/Leidokos-CMake
+[travis:linux:image]: https://img.shields.io/travis/CapeLeidokos/Leidokos-CMake.svg?style=for-the-badge&label=Linux&branch=master
+[travis:linux:target]: https://travis-ci.org/CapeLeidokos/Leidokos-CMake
 
-[appveyor:image]: https://ci.appveyor.com/api/projects/status/f101o95ppui2lqar/branch/master?svg=true
-[appveyor:status]: https://ci.appveyor.com/project/noseglasses/leidokos-cmake/branch/master
+[travis:MacOS:image]: https://img.shields.io/travis/CapeLeidokos/Leidokos-CMake.svg?style=for-the-badge&label=Mac&branch=master
+[travis:MacOS:target]: https://travis-ci.org/CapeLeidokos/Leidokos-CMake
 
-[st:stable]: https://img.shields.io/badge/stable-✔-black.svg?style=flat&colorA=44cc11&colorB=494e52
-[st:broken]: https://img.shields.io/badge/broken-X-black.svg?style=flat&colorA=e05d44&colorB=494e52
-[st:experimental]: https://img.shields.io/badge/experimental----black.svg?style=flat&colorA=dfb317&colorB=494e52
+[appveyor:image]: https://img.shields.io/appveyor/ci/CapeLeidokos/Leidokos-CMake/master.svg?style=for-the-badge&label=Windows
+[appveyor:target]: https://ci.appveyor.com/project/CapeLeidokos/Leidokos-CMake/branch/master
+
+[version:image]: https://img.shields.io/github/release/CapeLeidokos/Leidokos-CMake.svg?style=for-the-badge
+[version:target]: https://github.com/CapeLeidokos/Leidokos-CMake/releases
+
+[st:stable]: https://img.shields.io/badge/stable-✔-black.svg?style=for-the-badge&colorA=44cc11&colorB=494e52
+[st:broken]: https://img.shields.io/badge/broken-X-black.svg?style=for-the-badge&colorA=e05d44&colorB=494e52
+[st:experimental]: https://img.shields.io/badge/experimental----black.svg?style=for-the-badge&colorA=dfb317&colorB=494e52
 
 # Leidokos-CMake
 An alternative platform independent build system for [Kaleidoscope](https://github.com/keyboardio/Kaleidoscope).
@@ -335,4 +344,4 @@ ccmake ..
 
 ## Regression-testing
 Currently we test if the build system actually builds the stock firmware and if the symbols in the firmware that
-is build do match those of the stock firmware if build with the legacy GNU make build system. This is done on GNU/Linux and MacOS ([travis][travis:status]) as well as on Windows ([appveyor][appveyor:status]).
+is build do match those of the stock firmware if build with the legacy GNU make build system. This is done on GNU/Linux and MacOS ([travis][travis:linux:target]) as well as on Windows ([appveyor][appveyor:target]).
