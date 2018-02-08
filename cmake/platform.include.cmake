@@ -218,6 +218,19 @@ else()
    message("Including hardware definition ${hardware_definition_file}")
    file(READ "${hardware_definition_file}" def_file_content)
    message("${def_file_content}")
+         execute_process(
+            COMMAND cmd /c dir "${hardware_definition_file}"
+            OUTPUT_VARIABLE out
+         )
+         message("hardware_definition_file: ${out}")
+         
+   get_filename_component(hdpath "${hardware_definition_file}" DIRECTORY)
+         execute_process(
+            COMMAND cmd /c dir "${hdpath}"
+            OUTPUT_VARIABLE out
+         )
+         message("hdpath: ${out}")
+         
    include("${hardware_definition_file}")
 endif()
 
