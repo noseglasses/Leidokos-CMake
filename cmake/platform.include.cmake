@@ -216,6 +216,8 @@ if(NOT EXISTS "${hardware_definition_file}")
 KALEIDOSCOPE_BOARD=${KALEIDOSCOPE_BOARD}")
 else()
    message("Including hardware definition ${hardware_definition_file}")
+   file(READ "${hardware_definition_file}" def_file_content)
+   message("${def_file_content}")
    include("${hardware_definition_file}")
 endif()
 
