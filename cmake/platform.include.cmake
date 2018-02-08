@@ -218,15 +218,17 @@ else()
    message("Including hardware definition ${hardware_definition_file}")
    file(READ "${hardware_definition_file}" def_file_content)
    message("${def_file_content}")
+   file(TO_NATIVE_PATH "${hardware_definition_file}" hardware_definition_file_native)
          execute_process(
-            COMMAND cmd /c dir "${hardware_definition_file}"
+            COMMAND cmd /c dir "${hardware_definition_file_native}"
             OUTPUT_VARIABLE out
          )
          message("hardware_definition_file: ${out}")
          
    get_filename_component(hdpath "${hardware_definition_file}" DIRECTORY)
+   file(TO_NATIVE_PATH "${hdpath}" hdpath_native)
          execute_process(
-            COMMAND cmd /c dir "${hdpath}"
+            COMMAND cmd /c dir "${hdpath_native}"
             OUTPUT_VARIABLE out
          )
          message("hdpath: ${out}")
