@@ -48,13 +48,18 @@ if(NOT KALEIDOSCOPE_HOST_BUILD)
    "
    )
 else()
-
+	  
+   if(CMAKE_HOST_WIN32)
+      set(extra_c_flags " -fno-omit-frame-pointer ")
+   endif()
+   
    # Define empty flags. Else Arduino-CMake will define something Arduino
    # specific, which we have to avoid for host builds.
    #
    set(ARDUINO_C_FLAGS "\
    -std=gnu11 \
    -DARDUINO_VIRTUAL\
+   ${extra_c_flags} \
    " CACHE INTERNAL "")
    
    # Note: -Wno-missing-braces is necessary to build with clang/XCode
@@ -67,6 +72,7 @@ else()
    -Wextra \
    -Wno-missing-braces \
    -DARDUINO_VIRTUAL\
+   ${extra_c_flags} \
    " CACHE INTERNAL "")
    
    set(ARDUINO_LIBRARIES_PATH "___dummy__")
