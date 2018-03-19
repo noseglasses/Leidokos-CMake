@@ -84,16 +84,22 @@ endif()
 _include_cmake(arduino_cmake)
    
 ################################################################################
+# Setup any Kaleidoscope modules that support CMake
+################################################################################
+
+_include_cmake(pre_firmware_module_setup)
+
+################################################################################
 # Configure the firmware build using Arduino-CMake
 ################################################################################
 
 _include_cmake(firmware_build)
-
+   
 ################################################################################
 # Setup any Kaleidoscope modules that support CMake
 ################################################################################
 
-_include_cmake(module_setup)
+_include_cmake(post_firmware_module_setup)
    
 ################################################################################
 # Additional targets for maintainance
