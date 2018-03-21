@@ -73,6 +73,7 @@ else()
    set(ARDUINO_SDK_PATH "___dummy__")
    set(ARDUINO_CMAKE_SKIP_DETECT_VERSION TRUE CACHE INTERNAL "")
    set(ARDUINO_CMAKE_SKIP_TEST_SETUP TRUE CACHE INTERNAL "")
+   set(ARDUINO_PLATFORM_LIBRARIES_PATH CACHE INTERNAL "")
    
    # Include Arduino.cmake directly to avoid Arduino toolchain setup as
    # it would be performed through defining CMAKE_TOOLCHAIN_FILE

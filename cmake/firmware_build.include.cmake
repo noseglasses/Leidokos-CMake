@@ -87,6 +87,8 @@ set(ARDUINO_LIBRARY_BLACKLIST
    "\
 ${ARDUINO_SDK_PATH_native}/libraries/Keyboard/src;\
 ${ARDUINO_SDK_PATH_native}/libraries/Mouse/src;\
+${ARDUINO_SDK_PATH}/libraries/Keyboard/src;\
+${ARDUINO_SDK_PATH}/libraries/Mouse/src;\
 ${blacklisted_libraries}\
 "
    CACHE INTERNAL "")
