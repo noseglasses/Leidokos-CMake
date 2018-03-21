@@ -5,17 +5,20 @@ set(usb_manufacturer "Nowbody")
 # set(platform_additional_libraries 
 #     "Kaleidoscope-Hardware-${product_id}")#;KeyboardioScanner")
    
+set(platform_additional_libraries 
+   "Kaleidoscope-HIDAdaptor-KeyboardioHID"
+   )
 # The distinction between guest and virtual HID libraries is done via
 # a #ifdef clause in the source code. This cannot be handled 
 # by Arduino-CMake. Thus, we suppress the accidentally founde
 # guest HID library.
 #
-set(blacklisted_libraries "\
-${KALEIDOSCOPE_LIBRARIES_DIR}/HID;\
-${KALEIDOSCOPE_LIBRARIES_DIR}/HID/src;\
-${KALEIDOSCOPE_LIBRARIES_DIR}/KeyboardioHID;\
-${KALEIDOSCOPE_LIBRARIES_DIR}/KeyboardioHID/src;\
-")
+set(blacklisted_libraries 
+   "${KALEIDOSCOPE_LIBRARIES_DIR}/HID"
+   "${KALEIDOSCOPE_LIBRARIES_DIR}/HID/src"
+   "${KALEIDOSCOPE_LIBRARIES_DIR}/KeyboardioHID"
+   "${KALEIDOSCOPE_LIBRARIES_DIR}/KeyboardioHID/src"
+)
 # 
 # function(configure_firmware_target
 #    target_
