@@ -21,26 +21,27 @@
 #
 if(CMAKE_HOST_APPLE)
 
-   macro(get_device_port cmd_)
+   macro(get_device_port port)
       if("${device_port}" STREQUAL "")
          execute_process(
-            COMMAND ${cmd_}
+            COMMAND find /dev -maxdepth 1 -name ${port}
             OUTPUT_VARIABLE device_port
          )
       endif()
    endmacro()
    
-   get_device_port("ls /dev/cu.usbmodemCkbio*")
-   get_device_port("ls /dev/cu.usbmodemCkbio*")
-   get_device_port("ls /dev/cu.usbmodemHID*")
-   get_device_port("ls /dev/cu.usbmodemCHID*")
-   get_device_port("ls /dev/cu.usbmodem14*")
+   get_device_port("/dev/cu.usbmodemCkbio*")
+   get_device_port("/dev/cu.usbmodemHID*")
+   get_device_port("/dev/cu.usbmodemCHID*")
+   get_device_port("/dev/cu.usbmodem14*")
 
 else()
    execute_process(
-      COMMAND ls /dev/ttyACM*
+      COMMAND find /dev -maxdepth 1 -name "ttyACM*"
       OUTPUT_VARIABLE device_port
+      OUTPUT_STRIP_TRAILING_WHITESPACE
    )
+   message("Device port is ${device_port}")
 endif()
 
 if("${device_port}" STREQUAL "")

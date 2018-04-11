@@ -65,15 +65,25 @@ if(NOT "${KALEIDOSCOPE_ADDITIONAL_SOURCES}" STREQUAL "")
    list(APPEND all_add_src ${KALEIDOSCOPE_ADDITIONAL_SOURCES})
 endif()
 
+list(APPEND all_add_src ${modules_additional_sources})
+
 set(KALEIDOSCOPE_ADDITIONAL_HEADERS "" CACHE STRING
    "A list of absolute paths of header files that are included in the \
 firmware build. This is only required for advanced use, e.g. when \
 Leidokos-CMake is embedded in another CMake build system.")
 mark_as_advanced(KALEIDOSCOPE_ADDITIONAL_HEADERS)
 
+set(all_headers "HDRS")
 if(NOT "${KALEIDOSCOPE_ADDITIONAL_HEADERS}" STREQUAL "")
-   set(add_headers HDRS ${KALEIDOSCOPE_ADDITIONAL_HEADERS})
+   list(APPEND all_headers ${KALEIDOSCOPE_ADDITIONAL_HEADERS} ${module_additional_headers})
 endif()
+
+list(APPEND all_headers ${modules_additional_headers})
+
+if("${all_headers}" STREQUAL "HDRS")
+   set(all_headers "")
+endif()
+message("all_headers: ${all_headers}")
 
 # Prevent some of Arduino's standard libraries to be found. This
 # is necessary as there is a Keyboard.h header in the Kaleidoscope
@@ -97,7 +107,7 @@ generate_arduino_firmware(
    "${kaleidoscope_firmware_target}" # CMake target name
    BOARD "${board_id}"
    SKETCH "${KALEIDOSCOPE_FIRMWARE_SKETCH}"
-   ${add_headers}
+   ${all_headers}
    SRCS ${all_add_src}
    PORT "${device_port}"
    PROGRAMMER "${KALEIDOSCOPE_ARDUINO_PROGRAMMER}"
