@@ -23,15 +23,44 @@
 # Leidokos-CMake
 An alternative platform independent build system for [Kaleidoscope](https://github.com/keyboardio/Kaleidoscope).
 
-## Supported platforms
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [Leidokos-CMake](#leidokos-cmake)
+- [Supported platforms](#supported-platforms)
+- [CapeLeidokos](#capeleidokos)
+- [Disclaimer](#disclaimer)
+- [Acknowledgements](#acknowledgements)
+- [Introduction](#introduction)
+	- [CMake a portable solution](#cmake-a-portable-solution)
+- [Prerequisites](#prerequisites)
+	- [Arduino-SDK](#arduino-sdk)
+	- [CMake](#cmake)
+- [For the impatient: A brief example](#for-the-impatient-a-brief-example)
+- [Usage](#usage)
+	- [Build](#build)
+	- [Upload](#upload)
+	- [Parallel builds](#parallel-builds)
+	- [Builds with other build systems](#builds-with-other-build-systems)
+	- [Auxiliary build targets](#auxiliary-build-targets)
+	- [Useful targets for developers](#useful-targets-for-developers)
+		- [Compile, pre-processing and assembly generation for individual sources](#compile-pre-processing-and-assembly-generation-for-individual-sources)
+		- [Disassembly](#disassembly)
+		- [Symbol list](#symbol-list)
+		- [Verbose builds](#verbose-builds)
+	- [Advanced configuration](#advanced-configuration)
+	- [Regression-testing](#regression-testing)
+
+<!-- /TOC -->
+
+# Supported platforms
 Windows, GNU/Linux, MacOS
 
-## CapeLeidokos
+# CapeLeidokos
 Leidokos-CMake is an essential part of the CapeLeidokos develop, testing and build infrastructure for the Kaleidoscope firmware.
 
 <img src="https://github.com/CapeLeidokos/CapeLeidokos/blob/master/CapeLeidokos.svg?sanitize=true">
 
-## Disclaimer
+# Disclaimer
 This project is not meant as a replacement for or as a competition to Kaleidoscope's stock build systems. It is rather meant to be an additional tool, directed to experienced programmers.
 
 The maintainers of Kaleidoscope pointed out that they are currently not planning to support
@@ -42,14 +71,14 @@ Instead, direct any issue reports and questions [here](https://github.com/CapeLe
 
 Pull requests are, of course, highly welcome, as well as ideas and issue reports.
 
-## Acknowledgements
+# Acknowledgements
 Great thanks to the developers of Arduino-CMake, namely the original developer [queezythegreat](https://github.com/queezythegreat)
 and the current maintainer [MrPointer](https://github.com/MrPointer).
 Your very well designed tool provides a transparent replacement to arduino-builder.
 
 Also, many thanks to the developers and maintainers of Kaleidoscope for their great work on the firmware.
 
-## Introduction
+# Introduction
 Kaleidoscope's stock build system is designed to be user friendly and welcoming.
 It enables builds using the Arduino IDE or through a GNU make based wrapper (Kaleidoscope-Builder) of Arduino-Builder.
 
@@ -114,17 +143,24 @@ ccmake <path to Leidokos-CMake>
 **Note:** Many calls to `cmake` or `ccmake` expect to be supplied with a directory that defines where the configuration
 file (`CMakeLists.txt`) resides.
 
-## Prerequisites
-### CMake
+# Prerequisites
+## Arduino-SDK
+The Arduino-SDK (IDE) must be installed on your system. Just follow the installation step for your system as explaned in the [Kaleidoscope Wiki](https://github.com/keyboardio/Kaleidoscope/wiki).
+
+On some systems (e.g. Linux), the environment variable `ARDUINO_SDK_PATH` must be set to point to Arduino's installation path (the directory where the arduino executable lives).
+
+## CMake
 To build with Leidokos-CMake, the CMake build system must be installed.
 On Ubuntu Linux, e.g. install it as
 ```bash
 sudo apt-get install cmake cmake-curses-gui
 ```
 
-## For the impatient: A brief example
+# For the impatient: A brief example
 The following example shows how Leidokos-CMake can be used to build the stock firmware on a
 GNU/Linux system using GNU make as build system.
+
+Before you start, make sure to install [CMake](#CMake) and the [Arduino-SDK](#Arduino-SDK) on your system.
 
 ```bash
 # TARGET_DIR is the directory where the firmware is supposed to be build.
@@ -159,7 +195,10 @@ cmake ${TARGET_DIR}/hardware/keyboardio/avr/libraries/Leidokos-CMake
 make
 ```
 
-## Usage
+# Usage
+
+## Build
+
 To build with CMake and GNU make on a GNU/Linux platform, do the following.
 
 1. Prepare the build directory
