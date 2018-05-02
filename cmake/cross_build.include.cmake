@@ -61,12 +61,16 @@ else()
    #       as most definitions of instances of class Key in Kaleidoscope
    #       are ill-formed.
    #
+   # Note: -Wnoc++11-narrowing: We have to silence a lot of narrowing conversion errors issued by
+   # clang that are due to missing casts in most of Kaleidoscope's Key defintions.
+   #
    set(ARDUINO_CXX_FLAGS "\
    -std=gnu++11 \
    -Wall \
    -Wextra \
    -Wno-missing-braces \
-   -DARDUINO_VIRTUAL\
+   -Wno-c++11-narrowing \
+   -DARDUINO_VIRTUAL \
    " CACHE INTERNAL "")
    
    set(ARDUINO_LIBRARIES_PATH "___dummy__")
