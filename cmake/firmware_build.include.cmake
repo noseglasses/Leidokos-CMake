@@ -129,6 +129,10 @@ set(KALEIDOSCOPE_BINARY_BASENAME "${binary_basename_default}" CACHE STRING
    "An alternative name for the generated firmware binary. The default name is used if empty.")
 mark_as_advanced(KALEIDOSCOPE_BINARY_BASENAME)
    
+string(TOUPPER "${product_id}" product_id_upper)
+#target_compile_definitions("${kaleidoscope_firmware_target}" PUBLIC "-DARDUINO_AVR_${product_id_upper}")
+add_definitions("-DARDUINO_AVR_${product_id_upper}")
+   
 if(NOT "${KALEIDOSCOPE_BINARY_BASENAME}" STREQUAL "")
    set_target_properties("${kaleidoscope_firmware_target}" 
       PROPERTIES OUTPUT_NAME "${KALEIDOSCOPE_BINARY_BASENAME}")

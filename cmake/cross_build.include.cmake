@@ -46,7 +46,10 @@ if(NOT KALEIDOSCOPE_HOST_BUILD)
    -ffunction-sections \
    -fdata-sections\
    "
-   )
+	CACHE INTERNAL "")
+
+   set(ARDUINO_LIBRARIES_PATH 
+"$ENV{ARDUINO_SDK_PATH}/hardware/arduino/avr/libraries" CACHE INTERNAL "")
 else()
 
    # Define empty flags. Else Arduino-CMake will define something Arduino
