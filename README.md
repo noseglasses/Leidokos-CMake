@@ -171,9 +171,9 @@ cd ${TARGET_DIR}
 
 # Clone the keyboardio arduino boards the standard way
 #
-mkdir -p hardware/keyboardio
-git clone --recursive https://github.com/keyboardio/Arduino-Boards.git \
-    hardware/keyboardio/avr
+mkdir -p hardware
+git clone --recursive https://github.com/keyboardio/Kaleidoscope-Bundle-Keyboardio.git \
+    hardware/keyboardio
 
 # Clone Leidokos-CMake as a sibling to the stock plugins
 #
@@ -206,9 +206,9 @@ To build with CMake and GNU make on a GNU/Linux platform, do the following.
 TARGET_DIR=<your prefered build location>
 cd ${TARGET_DIR}
 
-mkdir -p hardware/keyboardio
-git clone --recursive https://github.com/keyboardio/Arduino-Boards.git \
-    hardware/keyboardio/avr
+mkdir -p hardware
+git clone --recursive https://github.com/keyboardio/Kaleidoscope-Bundle-Keyboardio.git \
+    hardware/keyboardio
 ```
 
 2. Clone the Leidokos-CMake repository to your `.../hardware/keyboardio/avr/libraries` folder.
