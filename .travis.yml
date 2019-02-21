@@ -45,8 +45,8 @@ install: |
   
 script: 
   - cd $HOME
-  - mkdir -p hardware/keyboardio
-  - git clone --recursive https://github.com/keyboardio/Arduino-Boards.git hardware/keyboardio/avr
+  - mkdir -p hardware
+  - git clone --recursive https://github.com/keyboardio/Kaleidoscope-Bundle-Keyboardio.git hardware/keyboardio
   - cd hardware/keyboardio/avr/libraries
   - if [ -n "${TRAVIS_PULL_REQUEST_BRANCH}" ]; then test_branch="${TRAVIS_PULL_REQUEST_BRANCH}"; else test_branch="${TRAVIS_BRANCH}"; fi
   - echo "test_branch=${test_branch}"
