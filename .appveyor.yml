@@ -23,6 +23,7 @@ init:
        set NINJA_DIR=%DEPS_DIR%\ninja
        set ARDUINO_VERSION=1.8.5
        set ARDUINO_DIR=%DEPS_DIR%\arduino-%ARDUINO_VERSION%
+       set ARDUINO_SDK_PATH=%ARDUINO_DIR%
        set ARDUINO_BIN_DIR=%ARDUINO_DIR%\hardware\tools\avr\bin
        
        set PATH=%NINJA_DIR%;%PATH%
@@ -67,8 +68,8 @@ build_script:
   - cmd: |
       set BASE_DIR=C:\projects\leidokos-cmake
       cd %BASE_DIR%
-      rmdir "hardware\keyboardio\avr" /s /q
-      git clone --recursive https://github.com/keyboardio/Arduino-Boards.git "hardware\keyboardio\avr"
+      rmdir "hardware\keyboardio" /s /q
+      git clone --recursive https://github.com/keyboardio/Kaleidoscope-Bundle-Keyboardio.git "hardware\keyboardio"
       cd hardware\keyboardio\avr\libraries
       if [%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%]==[] set test_branch=%APPVEYOR_REPO_BRANCH%
       if not [%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%]==[] set test_branch=%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%

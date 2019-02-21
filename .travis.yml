@@ -42,6 +42,8 @@ install: |
          tar xJf "${ARDUINO_ARCHIVE}"
       fi
     fi
+      
+    export ARDUINO_SDK_PATH=${ARDUINO_DIR}
   
 script: 
   - cd $HOME
