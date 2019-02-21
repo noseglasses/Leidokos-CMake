@@ -186,13 +186,15 @@ cd ${TARGET_DIR}
 mkdir build
 cd build
 
+# Plug in the keyboard while holding the PROG-key
+
 # Configure the build system
 #
 cmake ${TARGET_DIR}/hardware/keyboardio/avr/libraries/Leidokos-CMake
 
-# Run the build
+# Run the build and upload the sketch
 #
-make
+make upload
 ```
 
 # Usage
@@ -217,13 +219,15 @@ cd ${TARGET_DIR}/hardware/keyboardio/avr/libraries
 git clone --recursive https://github.com/CapeLeidokos/Leidokos-CMake.git
 ```
 
-3. Setup the CMake build system (this will use CMake's default generator for your platform)
+3. Plug in the keyboard while holding the PROG-key
+
+4. Setup the CMake build system (this will use CMake's default generator for your platform)
 ```bash
 cd ${TARGET_DIR}
 cmake ${TARGET_DIR}/hardware/keyboardio/avr/libraries/Leidokos-CMake
 ```
 
-4. Build
+5. Build
 ```bash
 make
 ```
