@@ -1,3 +1,6 @@
+**This project is discontinued as Kaleidoscope's build system learnt to build in parallel and support ccache. Due to this, some of the advantages described below do not apply anymore when compared to the latest version of Kaleidoscope's build system.**
+
+
 ![status][st:stable]
 [![Build Status][travis:linux:image]][travis:linux:target]
 [![Build Status][travis:MacOS:image]][travis:MacOS:target]
